@@ -24,11 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-cx1vito692a(4vh&u0t^3p7ffk70h0(!6)6h5fjlz20+64@wsm')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'True') == 'True'
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
     'oxit.run',
     'www.oxit.run',
+    'web-production-622a6.up.railway.app',
     '*.up.railway.app',
     '*.railway.app',
     '127.0.0.1',
@@ -39,6 +40,7 @@ ALLOWED_HOSTS = [
 CSRF_TRUSTED_ORIGINS = [
     'https://oxit.run',
     'https://www.oxit.run',
+    'https://web-production-622a6.up.railway.app',
     'https://*.up.railway.app',
     'https://*.railway.app',
     'http://127.0.0.1:8000',

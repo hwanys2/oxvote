@@ -3,86 +3,120 @@
 {% block title %}{{ question.text|truncatechars:30 }}{% endblock %}
 
 {% block content %}
-<div class="dashboard-container">
-    <div class="dashboard-board">
-        <!-- 헤더 -->
-        <div class="board-header">
-            <h1 class="question-text">{{ question.text }}</h1>
-            <div class="live-indicator">
-                <div class="live-dot"></div>
-                <span>LIVE</span>
+<div class="scoreboard-container">
+    <!-- 메인 전광판 -->
+    <div class="main-scoreboard">
+        <!-- 헤더 섹션 -->
+        <div class="scoreboard-header">
+            <div class="header-content">
+                <h1 class="question-display">{{ question.text }}</h1>
+                <div class="live-badge">
+                    <div class="pulse-dot"></div>
+                    <span>LIVE</span>
+                </div>
             </div>
         </div>
         
-        <!-- 메인 콘텐츠 -->
-        <div class="board-content">
-            <!-- 왼쪽: QR 코드 -->
-            <div class="qr-panel">
-                <div class="panel-title">투표 참여</div>
-                <div class="qr-wrapper">
-                    <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code" class="qr-code">
+        <!-- 메인 콘텐츠 그리드 -->
+        <div class="scoreboard-grid">
+            <!-- QR 섹션 -->
+            <div class="qr-section">
+                <div class="section-header">
+                    <h3>투표 참여</h3>
+                    <div class="header-accent"></div>
                 </div>
-                <div class="qr-instruction">QR 코드를 스캔하여 투표하세요</div>
+                <div class="qr-display">
+                    <div class="qr-frame">
+                        <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code" class="qr-image">
+                    </div>
+                    <p class="qr-instruction">QR 코드를 스캔하세요</p>
+                </div>
             </div>
             
-            <!-- 중앙: 통계 및 컨트롤 -->
-            <div class="control-panel">
-                <div class="stats-row">
-                    <div class="stat-item">
-                        <div class="stat-number" id="totalVotes">0</div>
-                        <div class="stat-label">총 투표수</div>
+            <!-- 통계 섹션 -->
+            <div class="stats-section">
+                <div class="section-header">
+                    <h3>실시간 통계</h3>
+                    <div class="header-accent"></div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-vote-yea"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-number" id="totalVotes">0</div>
+                            <div class="stat-label">총 투표수</div>
+                        </div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-number" id="participantCount">0</div>
-                        <div class="stat-label">참여자수</div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-number" id="participantCount">0</div>
+                            <div class="stat-label">참여자수</div>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="control-row">
-                    <button id="toggleResults" class="toggle-btn">
-                        <div class="toggle-switch">
-                            <div class="toggle-handle"></div>
+                <div class="control-section">
+                    <button id="toggleResults" class="control-button">
+                        <div class="button-icon">
+                            <i class="fas fa-eye" id="toggleIcon"></i>
                         </div>
                         <span id="toggleText">결과 숨김</span>
                     </button>
                 </div>
             </div>
             
-            <!-- 오른쪽: 결과 -->
-            <div class="results-panel">
-                <div class="panel-title">실시간 결과</div>
+            <!-- 결과 섹션 -->
+            <div class="results-section">
+                <div class="section-header">
+                    <h3>투표 결과</h3>
+                    <div class="header-accent"></div>
+                </div>
                 
                 <div id="resultsContainer" class="results-display" style="display: none;">
-                    <div class="vote-result">
-                        <div class="vote-option agree">
-                            <div class="option-header">
-                                <div class="option-icon">✓</div>
-                                <div class="option-label">찬성</div>
-                                <div class="option-percent" id="oPercentage">0%</div>
+                    <div class="result-cards">
+                        <div class="result-card agree-card">
+                            <div class="result-header">
+                                <div class="result-icon">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div class="result-label">찬성</div>
+                                <div class="result-percentage" id="oPercentage">0%</div>
                             </div>
-                            <div class="progress-track">
-                                <div class="progress-fill agree-fill" id="oProgress"></div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill agree-progress" id="oProgress"></div>
+                                </div>
                             </div>
-                            <div class="vote-count" id="oCount">0명</div>
+                            <div class="result-count" id="oCount">0명</div>
                         </div>
                         
-                        <div class="vote-option disagree">
-                            <div class="option-header">
-                                <div class="option-icon">✗</div>
-                                <div class="option-label">반대</div>
-                                <div class="option-percent" id="xPercentage">0%</div>
+                        <div class="result-card disagree-card">
+                            <div class="result-header">
+                                <div class="result-icon">
+                                    <i class="fas fa-times"></i>
+                                </div>
+                                <div class="result-label">반대</div>
+                                <div class="result-percentage" id="xPercentage">0%</div>
                             </div>
-                            <div class="progress-track">
-                                <div class="progress-fill disagree-fill" id="xProgress"></div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill disagree-progress" id="xProgress"></div>
+                                </div>
                             </div>
-                            <div class="vote-count" id="xCount">0명</div>
+                            <div class="result-count" id="xCount">0명</div>
                         </div>
                     </div>
                 </div>
                 
-                <div id="hiddenMessage" class="hidden-state">
-                    <div class="hidden-icon">🔒</div>
-                    <div class="hidden-text">결과 숨김</div>
+                <div id="hiddenMessage" class="hidden-display">
+                    <div class="hidden-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="hidden-text">결과가 숨겨져 있습니다</div>
                 </div>
             </div>
         </div>
@@ -100,85 +134,110 @@
 
 body {
     font-family: 'Inter', sans-serif;
-    background: #0a0a0a;
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
     color: #ffffff;
-    overflow: hidden;
+    overflow-x: hidden;
+    min-height: 100vh;
 }
 
-.dashboard-container {
-    width: 100vw;
-    height: 100vh;
+/* 메인 컨테이너 */
+.scoreboard-container {
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(ellipse at center, #1a1a1a 0%, #0a0a0a 100%);
+    padding: 20px;
+    background: radial-gradient(ellipse at center, rgba(15, 15, 35, 0.8) 0%, rgba(10, 10, 25, 0.9) 100%);
 }
 
-.dashboard-board {
-    width: 90vw;
-    max-width: 1400px;
-    aspect-ratio: 4/3;
-    background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
-    border: 3px solid #333;
-    border-radius: 20px;
+.main-scoreboard {
+    width: 100%;
+    max-width: 1600px;
+    background: linear-gradient(145deg, #1e1e3f 0%, #2a2a4a 100%);
+    border-radius: 24px;
+    border: 2px solid rgba(0, 255, 255, 0.2);
     box-shadow: 
-        0 0 50px rgba(0, 255, 255, 0.1),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-    display: flex;
-    flex-direction: column;
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
     overflow: hidden;
-}
-
-/* 헤더 */
-.board-header {
-    height: 80px;
-    background: linear-gradient(90deg, #2a2a2a 0%, #333 50%, #2a2a2a 100%);
-    border-bottom: 2px solid #444;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 40px;
     position: relative;
 }
 
-.board-header::before {
+.main-scoreboard::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent 0%, #00ffff 50%, transparent 100%);
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(0, 255, 255, 0.03) 50%, transparent 70%);
+    pointer-events: none;
 }
 
-.question-text {
-    font-size: 1.8rem;
-    font-weight: 600;
+/* 헤더 */
+.scoreboard-header {
+    background: linear-gradient(90deg, #2a2a4a 0%, #3a3a5a 50%, #2a2a4a 100%);
+    border-bottom: 2px solid rgba(0, 255, 255, 0.3);
+    padding: 30px 40px;
+    position: relative;
+}
+
+.scoreboard-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, #00ffff 20%, #00ffff 80%, transparent 100%);
+    opacity: 0.6;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 100%;
+}
+
+.question-display {
+    font-size: 2.2rem;
+    font-weight: 700;
     color: #ffffff;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
     max-width: 70%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    letter-spacing: -0.5px;
 }
 
-.live-indicator {
+.live-badge {
     display: flex;
     align-items: center;
-    gap: 8px;
-    background: #ff2d55;
-    padding: 8px 16px;
-    border-radius: 20px;
+    gap: 12px;
+    background: linear-gradient(135deg, #ff4757 0%, #ff3838 100%);
+    padding: 12px 24px;
+    border-radius: 30px;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 600;
-    letter-spacing: 1px;
-    box-shadow: 0 0 20px rgba(255, 45, 85, 0.4);
+    letter-spacing: 2px;
+    box-shadow: 
+        0 4px 20px rgba(255, 71, 87, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    animation: liveGlow 2s ease-in-out infinite alternate;
 }
 
-.live-dot {
-    width: 8px;
-    height: 8px;
+@keyframes liveGlow {
+    0% { box-shadow: 0 4px 20px rgba(255, 71, 87, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1); }
+    100% { box-shadow: 0 4px 30px rgba(255, 71, 87, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.2); }
+}
+
+.pulse-dot {
+    width: 10px;
+    height: 10px;
     background: #ffffff;
     border-radius: 50%;
     animation: pulse 1.5s infinite;
@@ -189,189 +248,239 @@ body {
     51%, 100% { opacity: 0.3; transform: scale(0.8); }
 }
 
-/* 메인 콘텐츠 */
-.board-content {
-    flex: 1;
+/* 메인 그리드 */
+.scoreboard-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
+    min-height: 600px;
     gap: 0;
-    height: 100%;
 }
 
-/* 패널 공통 스타일 */
-.qr-panel, .control-panel, .results-panel {
-    background: rgba(30, 30, 30, 0.8);
-    border-right: 1px solid #444;
+/* 공통 섹션 스타일 */
+.qr-section, .stats-section, .results-section {
+    padding: 40px 30px;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     flex-direction: column;
-    padding: 30px;
     position: relative;
 }
 
-.results-panel {
+.results-section {
     border-right: none;
 }
 
-.panel-title {
-    font-size: 1.1rem;
+.section-header {
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.section-header h3 {
+    font-size: 1.3rem;
     font-weight: 600;
     color: #00ffff;
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
     text-transform: uppercase;
     letter-spacing: 1px;
     font-family: 'JetBrains Mono', monospace;
 }
 
-/* QR 패널 */
-.qr-wrapper {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 20px 0;
+.header-accent {
+    height: 3px;
+    background: linear-gradient(90deg, transparent 0%, #00ffff 50%, transparent 100%);
+    border-radius: 2px;
+    opacity: 0.6;
 }
 
-.qr-code {
-    width: 200px;
-    height: 200px;
-    border-radius: 15px;
-    border: 3px solid #444;
-    box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+/* QR 섹션 */
+.qr-display {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+}
+
+.qr-frame {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(0, 255, 255, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.qr-frame:hover {
+    transform: scale(1.05);
+}
+
+.qr-image {
+    width: 180px;
+    height: 180px;
+    display: block;
 }
 
 .qr-instruction {
     text-align: center;
-    color: #aaa;
-    font-size: 0.9rem;
-    margin-top: 20px;
+    color: #b0b0b0;
+    font-size: 1rem;
+    font-weight: 500;
     line-height: 1.4;
 }
 
-/* 컨트롤 패널 */
-.stats-row {
-    display: flex;
+/* 통계 섹션 */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 20px;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
 }
 
-.stat-item {
-    flex: 1;
-    text-align: center;
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid #444;
-    border-radius: 10px;
-    padding: 20px 15px;
-}
-
-.stat-number {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #00ffff;
-    font-family: 'JetBrains Mono', monospace;
-    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
-    line-height: 1;
-}
-
-.stat-label {
-    font-size: 0.8rem;
-    color: #888;
-    margin-top: 8px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.control-row {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex: 1;
-}
-
-.toggle-btn {
+.stat-card {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 25px 20px;
     display: flex;
     align-items: center;
     gap: 15px;
-    background: none;
-    border: none;
-    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0, 255, 255, 0.3);
+    box-shadow: 0 8px 25px rgba(0, 255, 255, 0.1);
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #00ffff 0%, #0099cc 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: #000;
+    flex-shrink: 0;
+}
+
+.stat-info {
+    flex: 1;
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #00ffff;
+    font-family: 'JetBrains Mono', monospace;
+    text-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+    line-height: 1;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 500;
+}
+
+.control-section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.control-button {
+    background: linear-gradient(135deg, #2a2a4a 0%, #3a3a5a 100%);
+    border: 2px solid rgba(0, 255, 255, 0.3);
+    border-radius: 50px;
+    padding: 15px 30px;
     color: #ffffff;
     font-size: 1rem;
-    font-weight: 500;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-.toggle-btn:hover {
-    transform: scale(1.05);
-}
-
-.toggle-switch {
-    width: 60px;
-    height: 30px;
-    background: #333;
-    border: 2px solid #555;
-    border-radius: 15px;
-    position: relative;
-    transition: all 0.3s ease;
-}
-
-.toggle-switch.active {
-    background: #00ffff;
+.control-button:hover {
+    background: linear-gradient(135deg, #3a3a5a 0%, #4a4a6a 100%);
     border-color: #00ffff;
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 255, 255, 0.2);
 }
 
-.toggle-handle {
+.button-icon {
     width: 24px;
     height: 24px;
-    background: #ffffff;
-    border-radius: 50%;
-    position: absolute;
-    top: 1px;
-    left: 1px;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.toggle-switch.active .toggle-handle {
-    transform: translateX(30px);
-    background: #000;
-}
-
-/* 결과 패널 */
+/* 결과 섹션 */
 .results-display {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 20px;
 }
 
-.vote-option {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 15px;
-    padding: 20px;
-    border: 1px solid #444;
+.result-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.result-card {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 25px;
     transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
-.vote-option.agree {
+.agree-card {
     border-left: 4px solid #00ff88;
 }
 
-.vote-option.disagree {
+.agree-card:hover {
+    border-color: #00ff88;
+    box-shadow: 0 8px 25px rgba(0, 255, 136, 0.2);
+}
+
+.disagree-card {
     border-left: 4px solid #ff4444;
 }
 
-.option-header {
+.disagree-card:hover {
+    border-color: #ff4444;
+    box-shadow: 0 8px 25px rgba(255, 68, 68, 0.2);
+}
+
+.result-header {
     display: flex;
     align-items: center;
     gap: 15px;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
-.option-icon {
-    width: 35px;
-    height: 35px;
+.result-icon {
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -379,65 +488,72 @@ body {
     font-size: 18px;
     font-weight: 700;
     color: #000;
+    flex-shrink: 0;
 }
 
-.agree .option-icon {
-    background: #00ff88;
+.agree-card .result-icon {
+    background: linear-gradient(135deg, #00ff88 0%, #00cc66 100%);
 }
 
-.disagree .option-icon {
-    background: #ff4444;
+.disagree-card .result-icon {
+    background: linear-gradient(135deg, #ff4444 0%, #cc3333 100%);
 }
 
-.option-label {
+.result-label {
     flex: 1;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     font-weight: 600;
     color: #ffffff;
 }
 
-.option-percent {
-    font-size: 1.8rem;
+.result-percentage {
+    font-size: 2rem;
     font-weight: 700;
     font-family: 'JetBrains Mono', monospace;
     color: #00ffff;
-    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    text-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
 }
 
-.progress-track {
-    height: 8px;
-    background: #333;
-    border-radius: 4px;
+.progress-container {
+    margin-bottom: 15px;
+}
+
+.progress-bar {
+    height: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
     overflow: hidden;
-    margin-bottom: 10px;
+    position: relative;
 }
 
 .progress-fill {
     height: 100%;
-    border-radius: 4px;
+    border-radius: 5px;
     transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     width: 0%;
+    position: relative;
 }
 
-.agree-fill {
+.agree-progress {
     background: linear-gradient(90deg, #00ff88 0%, #00cc66 100%);
-    box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
 }
 
-.disagree-fill {
+.disagree-progress {
     background: linear-gradient(90deg, #ff4444 0%, #cc3333 100%);
-    box-shadow: 0 0 10px rgba(255, 68, 68, 0.3);
+    box-shadow: 0 0 15px rgba(255, 68, 68, 0.4);
 }
 
-.vote-count {
+.result-count {
     text-align: right;
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: #aaa;
     font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
 }
 
 /* 숨김 상태 */
-.hidden-state {
+.hidden-display {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -448,74 +564,113 @@ body {
 }
 
 .hidden-icon {
-    font-size: 3rem;
-    margin-bottom: 15px;
-    opacity: 0.6;
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.4;
+    color: #888;
 }
 
 .hidden-text {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     font-weight: 500;
     color: #888;
 }
 
-/* 반응형 */
-@media (max-width: 1200px) {
-    .dashboard-board {
-        width: 95vw;
+/* 반응형 디자인 */
+@media (max-width: 1400px) {
+    .main-scoreboard {
+        max-width: 1200px;
     }
     
-    .question-text {
-        font-size: 1.5rem;
+    .question-display {
+        font-size: 1.8rem;
     }
     
-    .qr-code {
+    .qr-image {
         width: 160px;
         height: 160px;
     }
-    
-    .stat-number {
-        font-size: 2rem;
-    }
 }
 
-@media (max-width: 900px) {
-    .board-content {
+@media (max-width: 1024px) {
+    .scoreboard-grid {
         grid-template-columns: 1fr;
         grid-template-rows: auto auto 1fr;
+        gap: 0;
     }
     
-    .qr-panel, .control-panel, .results-panel {
+    .qr-section, .stats-section, .results-section {
         border-right: none;
-        border-bottom: 1px solid #444;
-        padding: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 30px 25px;
     }
     
-    .results-panel {
+    .results-section {
         border-bottom: none;
     }
     
-    .board-header {
-        height: 60px;
-        padding: 0 20px;
+    .scoreboard-header {
+        padding: 25px 30px;
     }
     
-    .question-text {
-        font-size: 1.2rem;
+    .question-display {
+        font-size: 1.6rem;
         max-width: 60%;
     }
     
-    .qr-code {
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .qr-image {
+        width: 140px;
+        height: 140px;
+    }
+}
+
+@media (max-width: 768px) {
+    .scoreboard-container {
+        padding: 10px;
+    }
+    
+    .scoreboard-header {
+        padding: 20px 25px;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+    
+    .question-display {
+        font-size: 1.4rem;
+        max-width: 100%;
+        white-space: normal;
+        text-align: center;
+    }
+    
+    .live-badge {
+        font-size: 0.9rem;
+        padding: 10px 20px;
+    }
+    
+    .qr-section, .stats-section, .results-section {
+        padding: 25px 20px;
+    }
+    
+    .qr-image {
         width: 120px;
         height: 120px;
     }
     
-    .stats-row {
-        margin-bottom: 20px;
+    .stat-number {
+        font-size: 1.8rem;
     }
     
-    .stat-number {
-        font-size: 1.5rem;
+    .result-percentage {
+        font-size: 1.6rem;
     }
 }
 </style>
