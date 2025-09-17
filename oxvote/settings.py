@@ -26,10 +26,19 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-cx1vito692a(4vh&u0t^3p7ffk
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['*']  # Railway에서 동적 도메인을 사용하므로
+ALLOWED_HOSTS = [
+    'oxit.run',
+    'www.oxit.run',
+    '*.up.railway.app',
+    '*.railway.app',
+    '127.0.0.1',
+    'localhost',
+]
 
-# CSRF trusted origins for Railway
+# CSRF trusted origins
 CSRF_TRUSTED_ORIGINS = [
+    'https://oxit.run',
+    'https://www.oxit.run',
     'https://*.up.railway.app',
     'https://*.railway.app',
     'http://127.0.0.1:8000',
@@ -148,3 +157,29 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Production security settings
+if not DEBUG:
+    # HTTPS settings
+    SECURE_SSL_REDIRECT = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    
+    # HSTS (HTTP Strict Transport Security)
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    
+    # Cookie security
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    CSRF_COOKIE_HTTPONLY = True
+    
+    # Content type options
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    
+    # XSS protection
+    SECURE_BROWSER_XSS_FILTER = True
+    
+    # Referrer policy
+    SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
