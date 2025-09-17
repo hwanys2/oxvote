@@ -1,0 +1,144 @@
+{% extends 'voting/base.html' %}
+
+{% block title %}투표 결과 - {{ question.text|truncatechars:30 }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body p-5">
+        <div class="text-center mb-4">
+            <h2 class="question-text">{{ question.text }}</h2>
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle me-2"></i>
+                투표가 완료되었습니다!
+            </div>
+        </div>
+        
+        <div id="resultsContainer">
+            {% if question.show_results %}
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold text-success">
+                            <i class="fas fa-circle text-success me-1"></i>
+                            O (찬성)
+                        </span>
+                        <span id="oCount" class="badge bg-success">{{ question.o_votes }}표</span>
+                    </div>
+                    <div class="progress progress-custom mb-2">
+                        <div id="oProgress" class="progress-bar progress-bar-o" role="progressbar" style="width: {{ question.o_percentage }}%"></div>
+                    </div>
+                    <div class="text-center">
+                        <span id="oPercentage" class="fw-bold text-success">{{ question.o_percentage }}%</span>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold text-danger">
+                            <i class="fas fa-times text-danger me-1"></i>
+                            X (반대)
+                        </span>
+                        <span id="xCount" class="badge bg-danger">{{ question.x_votes }}표</span>
+                    </div>
+                    <div class="progress progress-custom mb-2">
+                        <div id="xProgress" class="progress-bar progress-bar-x" role="progressbar" style="width: {{ question.x_percentage }}%"></div>
+                    </div>
+                    <div class="text-center">
+                        <span id="xPercentage" class="fw-bold text-danger">{{ question.x_percentage }}%</span>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <h5>총 투표수: <span id="totalVotes" class="text-primary">{{ question.total_votes }}</span>표</h5>
+                </div>
+            {% else %}
+                <div class="text-center text-muted">
+                    <i class="fas fa-eye-slash fa-3x mb-3"></i>
+                    <h4>결과가 아직 공개되지 않았습니다</h4>
+                    <p>선생님이 결과를 공개할 때까지 기다려주세요.</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="text-center mt-4">
+            <button id="refreshBtn" class="btn btn-outline-primary btn-custom me-2">
+                <i class="fas fa-sync-alt me-2"></i>
+                새로고침
+            </button>
+            <a href="{% url 'home' %}" class="btn btn-secondary btn-custom">
+                <i class="fas fa-home me-2"></i>
+                홈으로
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const questionId = '{{ question.id }}';
+
+function updateStats(data) {
+    const resultsContainer = document.getElementById('resultsContainer');
+    
+    if (data.show_results) {
+        resultsContainer.innerHTML = `
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-bold text-success">
+                        <i class="fas fa-circle text-success me-1"></i>
+                        O (찬성)
+                    </span>
+                    <span class="badge bg-success">${data.o_votes}표</span>
+                </div>
+                <div class="progress progress-custom mb-2">
+                    <div class="progress-bar progress-bar-o" role="progressbar" style="width: ${data.o_percentage}%"></div>
+                </div>
+                <div class="text-center">
+                    <span class="fw-bold text-success">${data.o_percentage}%</span>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-bold text-danger">
+                        <i class="fas fa-times text-danger me-1"></i>
+                        X (반대)
+                    </span>
+                    <span class="badge bg-danger">${data.x_votes}표</span>
+                </div>
+                <div class="progress progress-custom mb-2">
+                    <div class="progress-bar progress-bar-x" role="progressbar" style="width: ${data.x_percentage}%"></div>
+                </div>
+                <div class="text-center">
+                    <span class="fw-bold text-danger">${data.x_percentage}%</span>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <h5>총 투표수: <span class="text-primary">${data.total_votes}</span>표</h5>
+            </div>
+        `;
+    } else {
+        resultsContainer.innerHTML = `
+            <div class="text-center text-muted">
+                <i class="fas fa-eye-slash fa-3x mb-3"></i>
+                <h4>결과가 아직 공개되지 않았습니다</h4>
+                <p>선생님이 결과를 공개할 때까지 기다려주세요.</p>
+            </div>
+        `;
+    }
+}
+
+function fetchStats() {
+    fetch(`/api/stats/${questionId}/`)
+        .then(response => response.json())
+        .then(data => updateStats(data))
+        .catch(error => console.error('Error:', error));
+}
+
+document.getElementById('refreshBtn').addEventListener('click', fetchStats);
+
+// 5초마다 자동 업데이트
+setInterval(fetchStats, 5000);
+</script>
+{% endblock %}

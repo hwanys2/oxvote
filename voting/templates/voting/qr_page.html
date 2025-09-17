@@ -1,0 +1,164 @@
+{% extends 'voting/base.html' %}
+
+{% block title %}QR 코드 - {{ question.text|truncatechars:30 }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body p-5">
+        <div class="text-center mb-4">
+            <h2 class="question-text">{{ question.text }}</h2>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="qr-container text-center">
+                    <h4 class="mb-3">QR 코드를 스캔하세요</h4>
+                    <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code" class="img-fluid mb-3" style="max-width: 300px;">
+                    <p class="text-muted small">
+                        <i class="fas fa-mobile-alt me-1"></i>
+                        학생들이 QR 코드를 스캔하여 투표할 수 있습니다
+                    </p>
+                    <div class="mt-3">
+                        <small class="text-muted">직접 링크: </small>
+                        <small class="text-break">{{ vote_url }}</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="text-center mb-4">
+                    <h4>실시간 투표 결과</h4>
+                    <button id="toggleResults" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-eye-slash"></i>
+                        <span id="toggleText">결과 보이기</span>
+                    </button>
+                </div>
+                
+                <div id="resultsContainer" style="display: none;">
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold text-success">
+                                <i class="fas fa-circle text-success me-1"></i>
+                                O (찬성)
+                            </span>
+                            <span id="oCount" class="badge bg-success">0표</span>
+                        </div>
+                        <div class="progress progress-custom mb-2">
+                            <div id="oProgress" class="progress-bar progress-bar-o" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <div class="text-center">
+                            <span id="oPercentage" class="fw-bold text-success">0%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold text-danger">
+                                <i class="fas fa-times text-danger me-1"></i>
+                                X (반대)
+                            </span>
+                            <span id="xCount" class="badge bg-danger">0표</span>
+                        </div>
+                        <div class="progress progress-custom mb-2">
+                            <div id="xProgress" class="progress-bar progress-bar-x" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <div class="text-center">
+                            <span id="xPercentage" class="fw-bold text-danger">0%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <h5>총 투표수: <span id="totalVotes" class="text-primary">0</span>표</h5>
+                    </div>
+                </div>
+                
+                <div id="hiddenMessage" class="text-center text-muted">
+                    <i class="fas fa-eye-slash fa-2x mb-2"></i>
+                    <p>결과가 숨겨져 있습니다</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{% url 'home' %}" class="btn btn-secondary btn-custom">
+                <i class="fas fa-plus me-2"></i>
+                새 질문 만들기
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let showResults = {{ question.show_results|yesno:"true,false" }};
+const questionId = '{{ question.id }}';
+
+function updateDisplay() {
+    const resultsContainer = document.getElementById('resultsContainer');
+    const hiddenMessage = document.getElementById('hiddenMessage');
+    const toggleBtn = document.getElementById('toggleResults');
+    const toggleText = document.getElementById('toggleText');
+    const toggleIcon = toggleBtn.querySelector('i');
+    
+    if (showResults) {
+        resultsContainer.style.display = 'block';
+        hiddenMessage.style.display = 'none';
+        toggleText.textContent = '결과 숨기기';
+        toggleIcon.className = 'fas fa-eye';
+    } else {
+        resultsContainer.style.display = 'none';
+        hiddenMessage.style.display = 'block';
+        toggleText.textContent = '결과 보이기';
+        toggleIcon.className = 'fas fa-eye-slash';
+    }
+}
+
+function updateStats(data) {
+    document.getElementById('oCount').textContent = data.o_votes + '표';
+    document.getElementById('xCount').textContent = data.x_votes + '표';
+    document.getElementById('oPercentage').textContent = data.o_percentage + '%';
+    document.getElementById('xPercentage').textContent = data.x_percentage + '%';
+    document.getElementById('oProgress').style.width = data.o_percentage + '%';
+    document.getElementById('xProgress').style.width = data.x_percentage + '%';
+    document.getElementById('totalVotes').textContent = data.total_votes;
+}
+
+function fetchStats() {
+    fetch(`/api/stats/${questionId}/`)
+        .then(response => response.json())
+        .then(data => {
+            showResults = data.show_results;
+            updateDisplay();
+            if (showResults) {
+                updateStats(data);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+document.getElementById('toggleResults').addEventListener('click', function() {
+    fetch(`/api/toggle-results/${questionId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        showResults = data.show_results;
+        updateDisplay();
+        if (showResults) {
+            updateStats(data);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+// 초기 상태 설정
+updateDisplay();
+
+// 3초마다 통계 업데이트
+setInterval(fetchStats, 3000);
+</script>
+{% endblock %}

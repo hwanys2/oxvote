@@ -1,0 +1,76 @@
+{% extends 'voting/base.html' %}
+
+{% block title %}투표하기 - {{ question.text|truncatechars:30 }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body p-5">
+        <div class="text-center">
+            <h2 class="question-text mb-4">{{ question.text }}</h2>
+            
+            {% if already_voted %}
+                <div class="alert alert-info">
+                    <i class="fas fa-check-circle me-2"></i>
+                    이미 투표하셨습니다! 감사합니다.
+                </div>
+                <a href="{% url 'vote_result' question.id %}" class="btn btn-primary btn-custom">
+                    <i class="fas fa-chart-bar me-2"></i>
+                    결과 보기
+                </a>
+            {% else %}
+                <p class="lead text-muted mb-5">아래 버튼을 선택하여 투표해주세요</p>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="vote-buttons">
+                        <button type="submit" name="choice" value="O" class="vote-button btn-o">
+                            <i class="fas fa-circle"></i>
+                        </button>
+                        <button type="submit" name="choice" value="X" class="vote-button btn-x">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="row mt-4">
+                    <div class="col-6 text-center">
+                        <h5 class="text-success">
+                            <i class="fas fa-circle text-success me-1"></i>
+                            O (찬성)
+                        </h5>
+                    </div>
+                    <div class="col-6 text-center">
+                        <h5 class="text-danger">
+                            <i class="fas fa-times text-danger me-1"></i>
+                            X (반대)
+                        </h5>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        한 번만 투표할 수 있습니다.
+                    </small>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.vote-button {
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.vote-button:hover {
+    transform: scale(1.1) translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+.vote-button:active {
+    transform: scale(1.05) translateY(-2px);
+}
+</style>
+{% endblock %}
