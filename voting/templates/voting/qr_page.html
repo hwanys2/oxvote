@@ -3,368 +3,559 @@
 {% block title %}{{ question.text|truncatechars:30 }}{% endblock %}
 
 {% block content %}
-<div class="elegant-container">
-    <!-- 질문 표시 - 세련된 디자인 -->
-    <div class="question-showcase">
-        <div class="question-card">
-            <div class="question-accent"></div>
-            <h1 class="question-text">{{ question.text }}</h1>
+<div class="modern-dashboard">
+    <!-- 질문 헤더 -->
+    <div class="question-header">
+        <div class="question-container">
+            <div class="question-badge">질문</div>
+            <h1 class="question-title">{{ question.text }}</h1>
         </div>
     </div>
     
-    <div class="content-grid">
-        <!-- QR 코드 섹션 -->
-        <div class="qr-section">
-            <div class="qr-card">
-                <div class="qr-header">
-                    <h3>학생들이 스캔하세요</h3>
+    <!-- 메인 컨텐츠 -->
+    <div class="dashboard-grid">
+        <!-- QR 카드 -->
+        <div class="qr-card">
+            <div class="card-header">
+                <div class="header-icon">
+                    <i class="fas fa-qrcode"></i>
                 </div>
-                <div class="qr-container">
-                    <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code" class="qr-code">
+            </div>
+            <div class="qr-display">
+                <div class="qr-frame">
+                    <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code" class="qr-image">
+                </div>
+                <div class="qr-pulse"></div>
+            </div>
+        </div>
+        
+        <!-- 컨트롤 카드 -->
+        <div class="control-card">
+            <div class="card-header">
+                <div class="header-icon control-icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <div class="header-text">
+                    <h3>결과 제어</h3>
+                    <p>실시간 투표 현황</p>
+                </div>
+            </div>
+            
+            <div class="control-center">
+                <button id="toggleResults" class="toggle-switch">
+                    <div class="switch-track">
+                        <div class="switch-thumb"></div>
+                    </div>
+                    <span id="toggleText">결과 숨김</span>
+                </button>
+            </div>
+            
+            <div class="stats-preview">
+                <div class="stat-item">
+                    <span class="stat-number" id="totalVotes">0</span>
+                    <span class="stat-label">총 투표</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-number" id="participantCount">0</span>
+                    <span class="stat-label">참여자</span>
                 </div>
             </div>
         </div>
         
-        <!-- 결과 섹션 -->
-        <div class="results-section">
-            <div class="control-panel">
-                <button id="toggleResults" class="control-btn">
-                    <i class="fas fa-eye-slash"></i>
-                    <span id="toggleText">결과 보이기</span>
-                </button>
-            </div>
-            
-            <div id="resultsContainer" class="results-panel" style="display: none;">
-                <div class="result-item o-result">
-                    <div class="result-header">
-                        <div class="result-label">
-                            <div class="result-icon o-icon">O</div>
-                            <span>찬성</span>
-                        </div>
-                        <div class="result-count" id="oCount">0표</div>
+        <!-- 결과 카드 -->
+        <div class="results-card">
+            <div id="resultsContainer" class="results-display" style="display: none;">
+                <div class="results-header">
+                    <h3>실시간 결과</h3>
+                    <div class="live-indicator">
+                        <div class="live-dot"></div>
+                        LIVE
                     </div>
-                    <div class="result-bar">
-                        <div class="bar-fill o-fill" id="oProgress" style="width: 0%"></div>
-                    </div>
-                    <div class="result-percent" id="oPercentage">0%</div>
                 </div>
                 
-                <div class="result-item x-result">
-                    <div class="result-header">
-                        <div class="result-label">
-                            <div class="result-icon x-icon">X</div>
-                            <span>반대</span>
+                <div class="vote-results">
+                    <div class="vote-option o-option">
+                        <div class="option-info">
+                            <div class="option-symbol o-symbol">O</div>
+                            <div class="option-details">
+                                <span class="option-name">찬성</span>
+                                <span class="option-count" id="oCount">0명</span>
+                            </div>
                         </div>
-                        <div class="result-count" id="xCount">0표</div>
+                        <div class="option-progress">
+                            <div class="progress-track">
+                                <div class="progress-fill o-fill" id="oProgress" style="width: 0%"></div>
+                            </div>
+                            <span class="progress-percent" id="oPercentage">0%</span>
+                        </div>
                     </div>
-                    <div class="result-bar">
-                        <div class="bar-fill x-fill" id="xProgress" style="width: 0%"></div>
+                    
+                    <div class="vote-option x-option">
+                        <div class="option-info">
+                            <div class="option-symbol x-symbol">X</div>
+                            <div class="option-details">
+                                <span class="option-name">반대</span>
+                                <span class="option-count" id="xCount">0명</span>
+                            </div>
+                        </div>
+                        <div class="option-progress">
+                            <div class="progress-track">
+                                <div class="progress-fill x-fill" id="xProgress" style="width: 0%"></div>
+                            </div>
+                            <span class="progress-percent" id="xPercentage">0%</span>
+                        </div>
                     </div>
-                    <div class="result-percent" id="xPercentage">0%</div>
-                </div>
-                
-                <div class="total-summary">
-                    총 <span id="totalVotes">0</span>명이 참여했습니다
                 </div>
             </div>
             
-            <div id="hiddenMessage" class="hidden-state">
-                <div class="hidden-icon">
+            <div id="hiddenMessage" class="hidden-results">
+                <div class="hidden-illustration">
                     <i class="fas fa-eye-slash"></i>
                 </div>
-                <p>결과가 숨겨져 있습니다</p>
+                <h4>결과 숨김</h4>
+                <p>투표 결과가 학생들에게 숨겨져 있습니다</p>
             </div>
         </div>
     </div>
 </div>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-.elegant-container {
+.modern-dashboard {
     min-height: 100vh;
-    background: #fafafa;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     padding: 40px 20px;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
-/* 질문 섹션 - 매우 세련된 디자인 */
-.question-showcase {
+/* 질문 헤더 */
+.question-header {
+    margin-bottom: 40px;
     display: flex;
     justify-content: center;
-    margin-bottom: 60px;
 }
 
-.question-card {
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    border-radius: 24px;
-    padding: 40px 50px;
-    box-shadow: 
-        0 20px 60px rgba(0, 0, 0, 0.05),
-        0 8px 25px rgba(0, 0, 0, 0.03),
-        inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    position: relative;
-    max-width: 800px;
-    backdrop-filter: blur(10px);
-}
-
-.question-accent {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60px;
-    height: 4px;
-    background: linear-gradient(90deg, #4285f4, #34a853);
-    border-radius: 0 0 4px 4px;
-}
-
-.question-text {
-    font-size: 2.2rem;
-    font-weight: 600;
-    color: #1a1a1a;
-    margin: 0;
-    line-height: 1.4;
+.question-container {
     text-align: center;
-    letter-spacing: -0.02em;
+    max-width: 900px;
 }
 
-/* 메인 컨텐츠 그리드 */
-.content-grid {
+.question-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.question-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #2d3748;
+    margin: 0;
+    line-height: 1.3;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 대시보드 그리드 */
+.dashboard-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 60px;
+    grid-template-rows: auto auto;
+    gap: 30px;
     max-width: 1200px;
     margin: 0 auto;
 }
 
-/* QR 코드 섹션 */
-.qr-section {
-    display: flex;
-    justify-content: center;
-}
-
 .qr-card {
-    background: white;
-    border-radius: 20px;
+    grid-row: 1 / 3;
+}
+
+.control-card {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.results-card {
+    grid-column: 2;
+    grid-row: 2;
+}
+
+/* 카드 공통 스타일 */
+.qr-card, .control-card, .results-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
     padding: 32px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e8eaed;
-    text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.1),
+        0 8px 16px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
-.qr-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.12);
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
 }
 
-.qr-header h3 {
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: #5f6368;
-    margin: 0 0 24px 0;
-    letter-spacing: 0.01em;
+.header-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
 }
 
-.qr-container {
-    background: #f8f9fa;
-    border-radius: 16px;
-    padding: 20px;
-    display: inline-block;
+.control-icon {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
 }
 
-.qr-code {
-    width: 240px;
-    height: 240px;
-    border-radius: 8px;
+.header-text h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0 0 4px 0;
 }
 
-/* 결과 섹션 */
-.results-section {
+.header-text p {
+    font-size: 14px;
+    color: #718096;
+    margin: 0;
+}
+
+/* QR 카드 */
+.qr-display {
+    position: relative;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+}
+
+.qr-frame {
+    position: relative;
+    background: white;
+    padding: 24px;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    z-index: 2;
+}
+
+.qr-image {
+    width: 280px;
+    height: 280px;
+    border-radius: 12px;
+}
+
+.qr-pulse {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 350px;
+    height: 350px;
+    border: 3px solid #667eea;
+    border-radius: 20px;
+    opacity: 0.3;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.3; }
+    50% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.1; }
+    100% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.3; }
+}
+
+/* 컨트롤 카드 */
+.control-center {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 32px;
+}
+
+.toggle-switch {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    color: #4a5568;
+}
+
+.switch-track {
+    width: 60px;
+    height: 32px;
+    background: #e2e8f0;
+    border-radius: 16px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.switch-track.active {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+}
+
+.switch-thumb {
+    width: 28px;
+    height: 28px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.switch-track.active .switch-thumb {
+    transform: translateX(28px);
+}
+
+.stats-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 24px;
 }
 
-.control-panel {
+.stat-item {
     text-align: center;
 }
 
-.control-btn {
-    background: linear-gradient(135deg, #4285f4 0%, #3367d6 100%);
-    color: white;
-    border: none;
-    padding: 14px 28px;
-    border-radius: 12px;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: inline-flex;
+.stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #2d3748;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #718096;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.stat-divider {
+    width: 1px;
+    height: 40px;
+    background: #e2e8f0;
+}
+
+/* 결과 카드 */
+.results-display {
+    animation: slideIn 0.5s ease;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 10px;
-    box-shadow: 0 4px 16px rgba(66, 133, 244, 0.3);
+    margin-bottom: 24px;
 }
 
-.control-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(66, 133, 244, 0.4);
+.results-header h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0;
 }
 
-.results-panel {
+.live-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #e53e3e;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.live-dot {
+    width: 8px;
+    height: 8px;
+    background: #e53e3e;
+    border-radius: 50%;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.3; }
+}
+
+.vote-results {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-.result-item {
-    background: white;
+.vote-option {
+    background: #f7fafc;
     border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
-    border: 1px solid #e8eaed;
-    transition: all 0.3s ease;
+    padding: 20px;
+    border-left: 4px solid transparent;
 }
 
-.result-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.1);
+.o-option {
+    border-left-color: #48bb78;
 }
 
-.result-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
+.x-option {
+    border-left-color: #e53e3e;
 }
 
-.result-label {
+.option-info {
     display: flex;
     align-items: center;
-    gap: 12px;
-    font-weight: 500;
-    color: #1a1a1a;
-    font-size: 16px;
+    gap: 16px;
+    margin-bottom: 12px;
 }
 
-.result-icon {
-    width: 36px;
-    height: 36px;
+.option-symbol {
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 18px;
+    font-weight: 800;
     color: white;
 }
 
-.o-icon {
-    background: linear-gradient(135deg, #34a853 0%, #66bb6a 100%);
+.o-symbol {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
 }
 
-.x-icon {
-    background: linear-gradient(135deg, #ea4335 0%, #ef5350 100%);
+.x-symbol {
+    background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
 }
 
-.result-count {
-    background: #f1f3f4;
-    padding: 6px 14px;
-    border-radius: 16px;
-    font-weight: 500;
-    color: #5f6368;
+.option-details {
+    flex: 1;
+}
+
+.option-name {
+    display: block;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 4px;
+}
+
+.option-count {
     font-size: 14px;
+    color: #718096;
 }
 
-.result-bar {
-    height: 6px;
-    background: #f1f3f4;
-    border-radius: 3px;
+.option-progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.progress-track {
+    flex: 1;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
     overflow: hidden;
-    margin-bottom: 12px;
 }
 
-.bar-fill {
+.progress-fill {
     height: 100%;
-    border-radius: 3px;
-    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 4px;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .o-fill {
-    background: linear-gradient(90deg, #34a853 0%, #66bb6a 100%);
+    background: linear-gradient(90deg, #48bb78 0%, #38a169 100%);
 }
 
 .x-fill {
-    background: linear-gradient(90deg, #ea4335 0%, #ef5350 100%);
+    background: linear-gradient(90deg, #e53e3e 0%, #c53030 100%);
 }
 
-.result-percent {
-    text-align: center;
-    font-size: 28px;
+.progress-percent {
     font-weight: 700;
-    color: #1a1a1a;
-    letter-spacing: -0.02em;
+    color: #2d3748;
+    min-width: 40px;
+    text-align: right;
 }
 
-.total-summary {
-    text-align: center;
-    font-size: 16px;
-    font-weight: 500;
-    color: #5f6368;
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 12px;
-    margin-top: 8px;
-}
-
-.hidden-state {
+/* 숨김 상태 */
+.hidden-results {
     text-align: center;
     padding: 60px 20px;
-    color: #9aa0a6;
+    color: #a0aec0;
 }
 
-.hidden-icon {
+.hidden-illustration i {
+    font-size: 64px;
     margin-bottom: 20px;
-}
-
-.hidden-icon i {
-    font-size: 48px;
     opacity: 0.6;
 }
 
-.hidden-state p {
-    font-size: 16px;
-    margin: 0;
-    font-weight: 400;
+.hidden-results h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #4a5568;
+    margin: 0 0 8px 0;
 }
 
+.hidden-results p {
+    color: #718096;
+    margin: 0;
+}
+
+/* 반응형 */
 @media (max-width: 768px) {
-    .elegant-container {
-        padding: 20px 16px;
-    }
-    
-    .question-text {
-        font-size: 1.6rem;
-    }
-    
-    .question-card {
-        padding: 32px 24px;
-    }
-    
-    .content-grid {
+    .dashboard-grid {
         grid-template-columns: 1fr;
-        gap: 40px;
+        grid-template-rows: auto auto auto;
     }
     
-    .qr-code {
-        width: 200px;
-        height: 200px;
+    .qr-card, .control-card, .results-card {
+        grid-column: 1;
+        grid-row: auto;
     }
     
-    .qr-card {
-        padding: 24px;
+    .question-title {
+        font-size: 1.8rem;
+    }
+    
+    .qr-image {
+        width: 220px;
+        height: 220px;
+    }
+    
+    .qr-pulse {
+        width: 280px;
+        height: 280px;
     }
 }
 </style>
@@ -380,29 +571,30 @@ function updateDisplay() {
     const hiddenMessage = document.getElementById('hiddenMessage');
     const toggleBtn = document.getElementById('toggleResults');
     const toggleText = document.getElementById('toggleText');
-    const toggleIcon = toggleBtn.querySelector('i');
+    const switchTrack = toggleBtn.querySelector('.switch-track');
     
     if (showResults) {
         resultsContainer.style.display = 'block';
         hiddenMessage.style.display = 'none';
-        toggleText.textContent = '결과 숨기기';
-        toggleIcon.className = 'fas fa-eye';
+        toggleText.textContent = '결과 공개';
+        switchTrack.classList.add('active');
     } else {
         resultsContainer.style.display = 'none';
         hiddenMessage.style.display = 'block';
-        toggleText.textContent = '결과 보이기';
-        toggleIcon.className = 'fas fa-eye-slash';
+        toggleText.textContent = '결과 숨김';
+        switchTrack.classList.remove('active');
     }
 }
 
 function updateStats(data) {
-    document.getElementById('oCount').textContent = data.o_votes + '표';
-    document.getElementById('xCount').textContent = data.x_votes + '표';
+    document.getElementById('oCount').textContent = data.o_votes + '명';
+    document.getElementById('xCount').textContent = data.x_votes + '명';
     document.getElementById('oPercentage').textContent = data.o_percentage + '%';
     document.getElementById('xPercentage').textContent = data.x_percentage + '%';
     document.getElementById('oProgress').style.width = data.o_percentage + '%';
     document.getElementById('xProgress').style.width = data.x_percentage + '%';
     document.getElementById('totalVotes').textContent = data.total_votes;
+    document.getElementById('participantCount').textContent = data.total_votes;
 }
 
 function fetchStats() {
@@ -411,9 +603,7 @@ function fetchStats() {
         .then(data => {
             showResults = data.show_results;
             updateDisplay();
-            if (showResults) {
-                updateStats(data);
-            }
+            updateStats(data); // 항상 통계 업데이트 (컨트롤 패널용)
         })
         .catch(error => console.error('Error:', error));
 }
@@ -429,9 +619,7 @@ document.getElementById('toggleResults').addEventListener('click', function() {
     .then(data => {
         showResults = data.show_results;
         updateDisplay();
-        if (showResults) {
-            updateStats(data);
-        }
+        updateStats(data);
     })
     .catch(error => console.error('Error:', error));
 });
@@ -439,7 +627,10 @@ document.getElementById('toggleResults').addEventListener('click', function() {
 // 초기 상태 설정
 updateDisplay();
 
-// 3초마다 통계 업데이트
-setInterval(fetchStats, 3000);
+// 2초마다 통계 업데이트 (더 실시간으로)
+setInterval(fetchStats, 2000);
+
+// 초기 통계 로드
+fetchStats();
 </script>
 {% endblock %}
