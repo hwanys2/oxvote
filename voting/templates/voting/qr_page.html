@@ -239,7 +239,7 @@ body {
 /* 메인 그리드 - PC 화면에 최적화된 가로 레이아웃 */
 .scoreboard-grid {
     display: grid;
-    grid-template-columns: minmax(300px, 1fr) minmax(300px, 1fr) minmax(400px, 1fr);
+    grid-template-columns: 1fr 1fr 450px; /* 투표 결과창은 고정 450px */
     flex: 1;
     gap: 0;
     height: calc(100vh - 100px);
@@ -578,10 +578,18 @@ body {
 
 /* 반응형 디자인 - 단계별 여백 축소 후 레이아웃 변경 */
 
-/* 1600px 이하: 여백 줄이기 시작 */
+/* 1600px 이하: 투표 결과창 유지, 다른 영역 여백만 줄이기 */
 @media (max-width: 1600px) {
-    .qr-section, .stats-section, .results-section {
+    .scoreboard-grid {
+        grid-template-columns: 1fr 1fr 420px; /* 결과창 약간 줄임 */
+    }
+    
+    .qr-section, .stats-section {
         padding: 35px 25px;
+    }
+    
+    .results-section {
+        padding: 40px 25px; /* 결과창은 패딩 유지 */
     }
     
     .scoreboard-header {
@@ -589,10 +597,18 @@ body {
     }
 }
 
-/* 1400px 이하: 여백 더 줄이기 */
+/* 1400px 이하: 여백 더 줄이기, 결과창 크기 유지 */
 @media (max-width: 1400px) {
-    .qr-section, .stats-section, .results-section {
+    .scoreboard-grid {
+        grid-template-columns: 1fr 1fr 400px; /* 결과창 400px 유지 */
+    }
+    
+    .qr-section, .stats-section {
         padding: 30px 20px;
+    }
+    
+    .results-section {
+        padding: 35px 20px; /* 결과창은 여전히 충분한 패딩 */
     }
     
     .scoreboard-header {
@@ -608,10 +624,18 @@ body {
     }
 }
 
-/* 1200px 이하: 최소 여백으로 줄이기 */
+/* 1200px 이하: 다른 영역 최소 여백, 결과창 크기 보존 */
 @media (max-width: 1200px) {
-    .qr-section, .stats-section, .results-section {
+    .scoreboard-grid {
+        grid-template-columns: 1fr 1fr 380px; /* 결과창 380px */
+    }
+    
+    .qr-section, .stats-section {
         padding: 25px 15px;
+    }
+    
+    .results-section {
+        padding: 30px 15px; /* 결과창 패딩 최소한 유지 */
     }
     
     .scoreboard-header {
@@ -627,11 +651,18 @@ body {
     }
 }
 
-/* 1024px 이하: 여백 완전 최소화 후 레이아웃 변경 */
+/* 1024px 이하: 결과창 최소 크기까지만 줄이기 */
 @media (max-width: 1024px) {
-    /* 여백 최소화 */
-    .qr-section, .stats-section, .results-section {
+    .scoreboard-grid {
+        grid-template-columns: 1fr 1fr 350px; /* 결과창 최소 350px */
+    }
+    
+    .qr-section, .stats-section {
         padding: 20px 10px;
+    }
+    
+    .results-section {
+        padding: 25px 10px; /* 결과창 최소 패딩 */
     }
     
     .scoreboard-header {
@@ -639,8 +670,8 @@ body {
     }
 }
 
-/* 900px 이하: 이제 레이아웃을 세로로 변경 */
-@media (max-width: 900px) {
+/* 950px 이하: 투표 결과창이 더 이상 줄어들 수 없을 때 세로 레이아웃으로 변경 */
+@media (max-width: 950px) {
     .scoreboard-grid {
         grid-template-columns: 1fr;
         grid-template-rows: auto auto 1fr;
