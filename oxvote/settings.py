@@ -28,6 +28,14 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ['*']  # Railway에서 동적 도메인을 사용하므로
 
+# CSRF trusted origins for Railway
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.up.railway.app',
+    'https://*.railway.app',
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
+]
+
 
 # Application definition
 
