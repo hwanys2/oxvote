@@ -3,6 +3,7 @@
 {% block title %}{{ question.text|truncatechars:30 }}{% endblock %}
 
 {% block content %}
+{% csrf_token %}
 <div class="scoreboard-container">
     <!-- 메인 전광판 -->
     <div class="main-scoreboard">
@@ -806,5 +807,4 @@ window.addEventListener('beforeunload', function() {
     isUpdating = true; // 추가 요청 방지
 });
 </script>
-{% endblock %}
 {% endblock %}
