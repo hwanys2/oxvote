@@ -576,10 +576,27 @@ body {
     color: #5f6368;
 }
 
-/* 반응형 디자인 */
+/* 반응형 디자인 - 단계별 여백 축소 후 레이아웃 변경 */
+
+/* 1600px 이하: 여백 줄이기 시작 */
+@media (max-width: 1600px) {
+    .qr-section, .stats-section, .results-section {
+        padding: 35px 25px;
+    }
+    
+    .scoreboard-header {
+        padding: 25px 35px;
+    }
+}
+
+/* 1400px 이하: 여백 더 줄이기 */
 @media (max-width: 1400px) {
-    .scoreboard-grid {
-        grid-template-columns: minmax(280px, 1fr) minmax(280px, 1fr) minmax(350px, 1fr);
+    .qr-section, .stats-section, .results-section {
+        padding: 30px 20px;
+    }
+    
+    .scoreboard-header {
+        padding: 20px 25px;
     }
     
     .question-display {
@@ -591,7 +608,39 @@ body {
     }
 }
 
+/* 1200px 이하: 최소 여백으로 줄이기 */
+@media (max-width: 1200px) {
+    .qr-section, .stats-section, .results-section {
+        padding: 25px 15px;
+    }
+    
+    .scoreboard-header {
+        padding: 20px 20px;
+    }
+    
+    .question-display {
+        font-size: 2rem;
+    }
+    
+    .qr-image {
+        max-width: 220px;
+    }
+}
+
+/* 1024px 이하: 여백 완전 최소화 후 레이아웃 변경 */
 @media (max-width: 1024px) {
+    /* 여백 최소화 */
+    .qr-section, .stats-section, .results-section {
+        padding: 20px 10px;
+    }
+    
+    .scoreboard-header {
+        padding: 15px 15px;
+    }
+}
+
+/* 900px 이하: 이제 레이아웃을 세로로 변경 */
+@media (max-width: 900px) {
     .scoreboard-grid {
         grid-template-columns: 1fr;
         grid-template-rows: auto auto 1fr;
@@ -609,13 +658,9 @@ body {
         border-bottom: none;
     }
     
-    .scoreboard-header {
-        padding: 25px 30px;
-    }
-    
     .question-display {
-        font-size: 2rem;
-        max-width: 60%;
+        font-size: 1.8rem;
+        max-width: 70%;
     }
     
     .stats-grid {
@@ -628,6 +673,7 @@ body {
     }
 }
 
+/* 768px 이하: 모바일 최적화 */
 @media (max-width: 768px) {
     .scoreboard-container {
         padding: 0;
