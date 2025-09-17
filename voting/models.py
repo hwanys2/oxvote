@@ -43,12 +43,11 @@ class Vote(models.Model):
     
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='votes')
     choice = models.CharField(max_length=1, choices=CHOICES)
-    ip_address = models.GenericIPAddressField(default='127.0.0.1')  # 임시로 추가
     client_fingerprint = models.CharField(max_length=32, default='unknown')  # MD5 해시 (32자)
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
-        unique_together = ['question', 'ip_address']  # 임시로 기존 설정 유지
+        unique_together = ['question', 'client_fingerprint']  # 같은 기기에서 중복 투표 방지
     
     def __str__(self):
         return f"{self.question.text[:30]} - {self.choice}"

@@ -3,65 +3,75 @@
 {% block title %}{{ question.text|truncatechars:30 }}{% endblock %}
 
 {% block content %}
-<div class="qr-page-container">
-    <!-- 질문 표시 -->
-    <div class="question-display">
-        <h1 class="question-title">{{ question.text }}</h1>
+<div class="elegant-container">
+    <!-- 질문 표시 - 세련된 디자인 -->
+    <div class="question-showcase">
+        <div class="question-card">
+            <div class="question-accent"></div>
+            <h1 class="question-text">{{ question.text }}</h1>
+        </div>
     </div>
     
-    <div class="main-content">
+    <div class="content-grid">
         <!-- QR 코드 섹션 -->
         <div class="qr-section">
-            <div class="qr-wrapper">
-                <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code" class="qr-image">
+            <div class="qr-card">
+                <div class="qr-header">
+                    <h3>학생들이 스캔하세요</h3>
+                </div>
+                <div class="qr-container">
+                    <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code" class="qr-code">
+                </div>
             </div>
         </div>
         
         <!-- 결과 섹션 -->
         <div class="results-section">
-            <div class="results-header">
-                <button id="toggleResults" class="toggle-btn">
+            <div class="control-panel">
+                <button id="toggleResults" class="control-btn">
                     <i class="fas fa-eye-slash"></i>
                     <span id="toggleText">결과 보이기</span>
                 </button>
             </div>
             
-            <div id="resultsContainer" class="results-container" style="display: none;">
-                <div class="vote-option o-option">
-                    <div class="option-header">
-                        <div class="option-label">
-                            <span class="option-icon">O</span>
-                            <span class="option-text">찬성</span>
+            <div id="resultsContainer" class="results-panel" style="display: none;">
+                <div class="result-item o-result">
+                    <div class="result-header">
+                        <div class="result-label">
+                            <div class="result-icon o-icon">O</div>
+                            <span>찬성</span>
                         </div>
-                        <div class="vote-count" id="oCount">0표</div>
+                        <div class="result-count" id="oCount">0표</div>
                     </div>
-                    <div class="progress-wrapper">
-                        <div class="progress-bar o-bar" id="oProgress" style="width: 0%"></div>
+                    <div class="result-bar">
+                        <div class="bar-fill o-fill" id="oProgress" style="width: 0%"></div>
                     </div>
-                    <div class="percentage" id="oPercentage">0%</div>
+                    <div class="result-percent" id="oPercentage">0%</div>
                 </div>
                 
-                <div class="vote-option x-option">
-                    <div class="option-header">
-                        <div class="option-label">
-                            <span class="option-icon">X</span>
-                            <span class="option-text">반대</span>
+                <div class="result-item x-result">
+                    <div class="result-header">
+                        <div class="result-label">
+                            <div class="result-icon x-icon">X</div>
+                            <span>반대</span>
                         </div>
-                        <div class="vote-count" id="xCount">0표</div>
+                        <div class="result-count" id="xCount">0표</div>
                     </div>
-                    <div class="progress-wrapper">
-                        <div class="progress-bar x-bar" id="xProgress" style="width: 0%"></div>
+                    <div class="result-bar">
+                        <div class="bar-fill x-fill" id="xProgress" style="width: 0%"></div>
                     </div>
-                    <div class="percentage" id="xPercentage">0%</div>
+                    <div class="result-percent" id="xPercentage">0%</div>
                 </div>
                 
-                <div class="total-votes">
-                    총 <span id="totalVotes">0</span>표
+                <div class="total-summary">
+                    총 <span id="totalVotes">0</span>명이 참여했습니다
                 </div>
             </div>
             
-            <div id="hiddenMessage" class="hidden-message">
-                <i class="fas fa-eye-slash"></i>
+            <div id="hiddenMessage" class="hidden-state">
+                <div class="hidden-icon">
+                    <i class="fas fa-eye-slash"></i>
+                </div>
                 <p>결과가 숨겨져 있습니다</p>
             </div>
         </div>
@@ -69,232 +79,292 @@
 </div>
 
 <style>
-.qr-page-container {
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+.elegant-container {
     min-height: 100vh;
-    padding: 20px;
+    background: #fafafa;
+    padding: 40px 20px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* 질문 섹션 - 매우 세련된 디자인 */
+.question-showcase {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    justify-content: center;
+    margin-bottom: 60px;
 }
 
-.question-display {
-    width: 100%;
-    max-width: 1000px;
-    margin-bottom: 40px;
-    text-align: center;
+.question-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 24px;
+    padding: 40px 50px;
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.05),
+        0 8px 25px rgba(0, 0, 0, 0.03),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    position: relative;
+    max-width: 800px;
+    backdrop-filter: blur(10px);
 }
 
-.question-title {
-    font-size: 2.5rem;
-    font-weight: 700;
+.question-accent {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #4285f4, #34a853);
+    border-radius: 0 0 4px 4px;
+}
+
+.question-text {
+    font-size: 2.2rem;
+    font-weight: 600;
     color: #1a1a1a;
     margin: 0;
-    line-height: 1.2;
+    line-height: 1.4;
+    text-align: center;
+    letter-spacing: -0.02em;
 }
 
-.main-content {
+/* 메인 컨텐츠 그리드 */
+.content-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 60px;
-    width: 100%;
-    max-width: 1000px;
-    align-items: start;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
+/* QR 코드 섹션 */
 .qr-section {
     display: flex;
     justify-content: center;
-    align-items: center;
 }
 
-.qr-wrapper {
+.qr-card {
     background: white;
-    padding: 30px;
     border-radius: 20px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-    border: 1px solid #e0e0e0;
-}
-
-.qr-image {
-    width: 280px;
-    height: 280px;
-    display: block;
-}
-
-.results-section {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.results-header {
+    padding: 32px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e8eaed;
     text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.toggle-btn {
-    background: #4285f4;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-size: 16px;
+.qr-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.12);
+}
+
+.qr-header h3 {
+    font-size: 1.1rem;
     font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    color: #5f6368;
+    margin: 0 0 24px 0;
+    letter-spacing: 0.01em;
 }
 
-.toggle-btn:hover {
-    background: #3367d6;
-    transform: translateY(-1px);
+.qr-container {
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 20px;
+    display: inline-block;
 }
 
-.results-container {
+.qr-code {
+    width: 240px;
+    height: 240px;
+    border-radius: 8px;
+}
+
+/* 결과 섹션 */
+.results-section {
     display: flex;
     flex-direction: column;
     gap: 24px;
 }
 
-.vote-option {
+.control-panel {
+    text-align: center;
+}
+
+.control-btn {
+    background: linear-gradient(135deg, #4285f4 0%, #3367d6 100%);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 16px rgba(66, 133, 244, 0.3);
+}
+
+.control-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(66, 133, 244, 0.4);
+}
+
+.results-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.result-item {
     background: white;
     border-radius: 16px;
     padding: 24px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    border: 2px solid transparent;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e8eaed;
     transition: all 0.3s ease;
 }
 
-.o-option {
-    border-color: #34a853;
+.result-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.1);
 }
 
-.x-option {
-    border-color: #ea4335;
-}
-
-.option-header {
+.result-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 16px;
 }
 
-.option-label {
+.result-label {
     display: flex;
     align-items: center;
     gap: 12px;
+    font-weight: 500;
+    color: #1a1a1a;
+    font-size: 16px;
 }
 
-.option-icon {
-    width: 40px;
-    height: 40px;
+.result-icon {
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 16px;
+    font-weight: 600;
     color: white;
 }
 
-.o-option .option-icon {
-    background: #34a853;
+.o-icon {
+    background: linear-gradient(135deg, #34a853 0%, #66bb6a 100%);
 }
 
-.x-option .option-icon {
-    background: #ea4335;
+.x-icon {
+    background: linear-gradient(135deg, #ea4335 0%, #ef5350 100%);
 }
 
-.option-text {
-    font-size: 18px;
-    font-weight: 600;
-    color: #1a1a1a;
-}
-
-.vote-count {
-    background: #f8f9fa;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-weight: 600;
-    color: #5f6368;
-}
-
-.progress-wrapper {
-    height: 8px;
+.result-count {
     background: #f1f3f4;
-    border-radius: 4px;
+    padding: 6px 14px;
+    border-radius: 16px;
+    font-weight: 500;
+    color: #5f6368;
+    font-size: 14px;
+}
+
+.result-bar {
+    height: 6px;
+    background: #f1f3f4;
+    border-radius: 3px;
     overflow: hidden;
     margin-bottom: 12px;
 }
 
-.progress-bar {
+.bar-fill {
     height: 100%;
-    border-radius: 4px;
-    transition: width 0.6s ease;
+    border-radius: 3px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.o-bar {
-    background: linear-gradient(90deg, #34a853, #66bb6a);
+.o-fill {
+    background: linear-gradient(90deg, #34a853 0%, #66bb6a 100%);
 }
 
-.x-bar {
-    background: linear-gradient(90deg, #ea4335, #ef5350);
+.x-fill {
+    background: linear-gradient(90deg, #ea4335 0%, #ef5350 100%);
 }
 
-.percentage {
+.result-percent {
     text-align: center;
-    font-size: 24px;
+    font-size: 28px;
     font-weight: 700;
     color: #1a1a1a;
+    letter-spacing: -0.02em;
 }
 
-.total-votes {
+.total-summary {
     text-align: center;
-    font-size: 20px;
-    font-weight: 600;
+    font-size: 16px;
+    font-weight: 500;
     color: #5f6368;
-    margin-top: 12px;
-    padding: 16px;
+    padding: 20px;
     background: #f8f9fa;
     border-radius: 12px;
+    margin-top: 8px;
 }
 
-.hidden-message {
+.hidden-state {
     text-align: center;
+    padding: 60px 20px;
     color: #9aa0a6;
-    padding: 40px;
 }
 
-.hidden-message i {
+.hidden-icon {
+    margin-bottom: 20px;
+}
+
+.hidden-icon i {
     font-size: 48px;
-    margin-bottom: 16px;
-    display: block;
+    opacity: 0.6;
 }
 
-.hidden-message p {
-    font-size: 18px;
+.hidden-state p {
+    font-size: 16px;
     margin: 0;
+    font-weight: 400;
 }
 
 @media (max-width: 768px) {
-    .question-title {
-        font-size: 1.8rem;
+    .elegant-container {
+        padding: 20px 16px;
     }
     
-    .main-content {
+    .question-text {
+        font-size: 1.6rem;
+    }
+    
+    .question-card {
+        padding: 32px 24px;
+    }
+    
+    .content-grid {
         grid-template-columns: 1fr;
         gap: 40px;
     }
     
-    .qr-image {
-        width: 240px;
-        height: 240px;
+    .qr-code {
+        width: 200px;
+        height: 200px;
     }
     
-    .qr-wrapper {
-        padding: 20px;
+    .qr-card {
+        padding: 24px;
     }
 }
 </style>
