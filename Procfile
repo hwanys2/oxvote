@@ -1,1 +1,1 @@
-web: gunicorn oxvote.wsgi --log-file -
+web: python manage.py migrate && gunicorn oxvote.wsgi --log-file -
