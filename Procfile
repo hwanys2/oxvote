@@ -1,1 +1,1 @@
-web: rm -f db.sqlite3 && rm -rf voting/migrations/0*.py && python manage.py makemigrations voting && python manage.py migrate && gunicorn oxvote.wsgi --log-file -
+web: python init_db.py && python manage.py collectstatic --noinput && gunicorn oxvote.wsgi --log-file -
