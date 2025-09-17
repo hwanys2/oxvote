@@ -165,10 +165,9 @@ body {
 
 .main-scoreboard {
     width: 100%;
-    height: 100vh;
+    min-height: 100vh;
     background: #ffffff;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    overflow: hidden;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -242,10 +241,9 @@ body {
     grid-template-columns: 1fr 1fr 450px; /* 투표 결과창은 고정 450px */
     flex: 1;
     gap: 0;
-    height: calc(100vh - 100px);
+    min-height: calc(100vh - 100px);
     width: 100%;
     max-width: 100vw;
-    overflow: hidden;
     box-sizing: border-box;
 }
 
@@ -672,11 +670,15 @@ body {
 
 /* 950px 이하: 투표 결과창이 더 이상 줄어들 수 없을 때 세로 레이아웃으로 변경 */
 @media (max-width: 950px) {
+    .main-scoreboard {
+        min-height: auto;
+    }
+    
     .scoreboard-grid {
         grid-template-columns: 1fr;
-        grid-template-rows: auto auto 1fr;
+        grid-template-rows: auto auto auto;
         gap: 0;
-        height: auto;
+        min-height: auto;
     }
     
     .qr-section, .stats-section, .results-section {
@@ -708,6 +710,17 @@ body {
 @media (max-width: 768px) {
     .scoreboard-container {
         padding: 0;
+        min-height: auto;
+    }
+    
+    .main-scoreboard {
+        height: auto;
+        min-height: auto;
+    }
+    
+    .scoreboard-grid {
+        height: auto;
+        min-height: auto;
     }
     
     .scoreboard-header {
