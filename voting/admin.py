@@ -10,6 +10,6 @@ class QuestionAdmin(admin.ModelAdmin):
 
 @admin.register(Vote)
 class VoteAdmin(admin.ModelAdmin):
-    list_display = ['question', 'choice', 'ip_address', 'created_at']
+    list_display = ['question', 'choice', 'client_fingerprint', 'created_at']
     list_filter = ['choice', 'created_at']
     readonly_fields = ['created_at']

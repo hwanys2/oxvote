@@ -1,0 +1,9 @@
+---
+description: 
+conda activate goodmessage 가상환경을 이용해.
+railway에 배포되어 있으니 항상 수정 후 github을 최신화 시켜야해.
+globs:  
+ - "**/*"
+
+alwaysApply: true
+---

@@ -1,41 +1,122 @@
 {% extends 'voting/base.html' %}
 
-{% block title %}O/X 투표 - 질문 생성{% endblock %}
+{% block title %}O/X 투표{% endblock %}
 
 {% block content %}
-<div class="card">
-    <div class="card-body text-center p-5">
-        <h1 class="display-4 mb-4">
-            <i class="fas fa-poll text-primary"></i>
-            O/X 투표
-        </h1>
-        <p class="lead text-muted mb-4">실시간으로 O/X 질문에 대한 투표를 받아보세요!</p>
-        
-        <form method="post" class="mt-4">
-            {% csrf_token %}
-            <div class="mb-4">
-                <label for="question" class="form-label h5">질문을 입력하세요</label>
-                <textarea 
-                    class="form-control form-control-lg" 
-                    id="question" 
-                    name="question" 
-                    rows="3" 
-                    placeholder="예: 오늘 날씨가 좋다고 생각하시나요?"
-                    required
-                ></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary btn-lg btn-custom">
-                <i class="fas fa-qrcode me-2"></i>
-                QR 코드 생성하기
+<div class="google-style-container">
+    <form method="post" class="google-form">
+        {% csrf_token %}
+        <div class="search-container">
+            <textarea 
+                class="google-input" 
+                id="question" 
+                name="question" 
+                placeholder="질문을 입력하세요"
+                required
+                rows="1"
+            ></textarea>
+            <button type="submit" class="google-btn">
+                질문 생성
             </button>
-        </form>
-        
-        <div class="mt-5">
-            <small class="text-muted">
-                <i class="fas fa-info-circle me-1"></i>
-                질문을 입력하면 QR 코드가 생성되어 학생들이 투표할 수 있습니다.
-            </small>
         </div>
-    </div>
+    </form>
 </div>
+
+<style>
+.google-style-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+    padding: 20px;
+}
+
+.google-form {
+    width: 100%;
+    max-width: 600px;
+}
+
+.search-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+.google-input {
+    width: 100%;
+    max-width: 500px;
+    padding: 20px 24px;
+    font-size: 18px;
+    border: 2px solid #dfe1e5;
+    border-radius: 50px;
+    outline: none;
+    resize: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    font-family: inherit;
+    line-height: 1.4;
+    min-height: 60px;
+    background: white;
+}
+
+.google-input:focus {
+    border-color: #4285f4;
+    box-shadow: 0 4px 12px rgba(66, 133, 244, 0.2);
+}
+
+.google-input::placeholder {
+    color: #9aa0a6;
+    font-size: 18px;
+}
+
+.google-btn {
+    background: #f8f9fa;
+    border: 1px solid #f8f9fa;
+    border-radius: 4px;
+    color: #3c4043;
+    font-size: 16px;
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.google-btn:hover {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    background: #f1f3f4;
+    border-color: #dadce0;
+}
+
+.google-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.3);
+}
+
+/* 자동 크기 조절 */
+.google-input {
+    overflow: hidden;
+}
+
+@media (max-width: 768px) {
+    .google-input {
+        font-size: 16px;
+        padding: 16px 20px;
+        min-height: 50px;
+    }
+    
+    .google-input::placeholder {
+        font-size: 16px;
+    }
+}
+</style>
+
+<script>
+// 텍스트 영역 자동 크기 조절
+document.getElementById('question').addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.max(60, this.scrollHeight) + 'px';
+});
+</script>
 {% endblock %}

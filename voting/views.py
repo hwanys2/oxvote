@@ -7,16 +7,24 @@ import json
 import qrcode
 from io import BytesIO
 import base64
+import hashlib
 from .models import Question, Vote
 
-def get_client_ip(request):
-    """클라이언트 IP 주소를 가져옵니다"""
+def get_client_fingerprint(request):
+    """클라이언트 고유 식별자를 생성합니다 (IP + User-Agent 조합)"""
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
+        ip = x_forwarded_for.split(',')[0].strip()
     else:
-        ip = request.META.get('REMOTE_ADDR')
-    return ip
+        ip = request.META.get('REMOTE_ADDR', '')
+    
+    user_agent = request.META.get('HTTP_USER_AGENT', '')
+    
+    # IP + User-Agent를 조합하여 고유한 해시 생성
+    fingerprint_string = f"{ip}:{user_agent}"
+    fingerprint = hashlib.md5(fingerprint_string.encode()).hexdigest()
+    
+    return fingerprint
 
 def home(request):
     """메인 페이지 - 질문 입력"""
@@ -60,10 +68,10 @@ def qr_page(request, question_id):
 def vote_page(request, question_id):
     """투표 페이지"""
     question = get_object_or_404(Question, id=question_id)
-    client_ip = get_client_ip(request)
+    client_fingerprint = get_client_fingerprint(request)
     
     # 이미 투표했는지 확인
-    already_voted = Vote.objects.filter(question=question, ip_address=client_ip).exists()
+    already_voted = Vote.objects.filter(question=question, client_fingerprint=client_fingerprint).exists()
     
     if request.method == 'POST' and not already_voted:
         choice = request.POST.get('choice')
@@ -71,7 +79,7 @@ def vote_page(request, question_id):
             Vote.objects.create(
                 question=question,
                 choice=choice,
-                ip_address=client_ip
+                client_fingerprint=client_fingerprint
             )
             return redirect('vote_result', question_id=question_id)
     
