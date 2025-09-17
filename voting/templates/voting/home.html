@@ -13,17 +13,19 @@
     <form method="post" class="google-form">
         {% csrf_token %}
         <div class="search-container">
-            <textarea 
-                class="google-input" 
-                id="question" 
-                name="question" 
-                placeholder="질문을 입력하세요"
-                required
-                rows="1"
-            ></textarea>
-            <button type="submit" class="google-btn">
-                질문 생성
-            </button>
+            <div class="input-wrapper">
+                <textarea 
+                    class="google-input" 
+                    id="question" 
+                    name="question" 
+                    placeholder="질문을 입력하세요"
+                    required
+                    rows="1"
+                ></textarea>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
         </div>
     </form>
 </div>
@@ -63,15 +65,20 @@
 
 .search-container {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 30px;
+    justify-content: center;
+    width: 100%;
+}
+
+.input-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    transition: transform 0.3s ease;
 }
 
 .google-input {
     width: 100%;
-    max-width: 500px;
-    padding: 20px 24px;
+    padding: 18px 70px 18px 24px;
     font-size: 18px;
     border: 2px solid #dfe1e5;
     border-radius: 50px;
@@ -83,11 +90,12 @@
     line-height: 1.4;
     min-height: 60px;
     background: white;
+    overflow: hidden;
 }
 
 .google-input:focus {
     border-color: #4285f4;
-    box-shadow: 0 4px 12px rgba(66, 133, 244, 0.15);
+    box-shadow: 0 4px 16px rgba(66, 133, 244, 0.2);
 }
 
 .google-input::placeholder {
@@ -95,32 +103,39 @@
     font-size: 18px;
 }
 
-.google-btn {
-    background: #f8f9fa;
-    border: 1px solid #f8f9fa;
-    border-radius: 4px;
-    color: #3c4043;
-    font-size: 16px;
-    padding: 12px 24px;
+.submit-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, #4285f4 0%, #3367d6 100%);
+    border: none;
+    border-radius: 50%;
+    color: white;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
     transition: all 0.3s ease;
-    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(66, 133, 244, 0.3);
 }
 
-.google-btn:hover {
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-    background: #f1f3f4;
-    border-color: #dadce0;
+.submit-btn:hover {
+    background: linear-gradient(135deg, #3367d6 0%, #2851a3 100%);
+    transform: translateY(-50%) scale(1.05);
+    box-shadow: 0 4px 12px rgba(66, 133, 244, 0.4);
 }
 
-.google-btn:focus {
+.submit-btn:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.submit-btn:focus {
     outline: none;
     box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.3);
-}
-
-/* 자동 크기 조절 */
-.google-input {
-    overflow: hidden;
 }
 
 @media (max-width: 768px) {
@@ -135,21 +150,55 @@
     
     .google-input {
         font-size: 16px;
-        padding: 16px 20px;
+        padding: 16px 60px 16px 20px;
         min-height: 50px;
     }
     
     .google-input::placeholder {
         font-size: 16px;
     }
+    
+    .submit-btn {
+        width: 36px;
+        height: 36px;
+        right: 7px;
+        font-size: 14px;
+    }
 }
 </style>
 
 <script>
+const questionInput = document.getElementById('question');
+const form = document.querySelector('.google-form');
+
 // 텍스트 영역 자동 크기 조절
-document.getElementById('question').addEventListener('input', function() {
+questionInput.addEventListener('input', function() {
     this.style.height = 'auto';
-    this.style.height = Math.max(60, this.scrollHeight) + 'px';
+    const newHeight = Math.max(60, Math.min(this.scrollHeight, 200)); // 최대 200px로 제한
+    this.style.height = newHeight + 'px';
+    
+    // 버튼 위치도 조정
+    const submitBtn = document.querySelector('.submit-btn');
+    submitBtn.style.top = '50%';
+});
+
+// 엔터키로 제출 (Shift+Enter는 줄바꿈)
+questionInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        if (this.value.trim()) {
+            form.submit();
+        }
+    }
+});
+
+// 포커스 시 애니메이션
+questionInput.addEventListener('focus', function() {
+    this.parentElement.style.transform = 'scale(1.02)';
+});
+
+questionInput.addEventListener('blur', function() {
+    this.parentElement.style.transform = 'scale(1)';
 });
 </script>
 {% endblock %}
