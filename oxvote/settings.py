@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-cx1vito692a(4vh&u0t^3p7ffk70h0(!6)6h5fjlz20+64@wsm')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True  # 임시로 디버그 모드 활성화
+DEBUG = False
 
 ALLOWED_HOSTS = [
     'oxit.run',
