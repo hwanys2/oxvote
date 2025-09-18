@@ -185,7 +185,32 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [os.getenv('REDIS_URL', 'redis://localhost:6379')],
+            "hosts": [os.getenv('REDIS_URL', os.getenv('REDISCLOUD_URL', 'redis://localhost:6379'))],
+        },
+    },
+}
+
+# 로깅 설정 (디버깅용)
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'voting': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        'channels': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        'daphne': {
+            'handlers': ['console'],
+            'level': 'INFO',
         },
     },
 }

@@ -775,6 +775,8 @@ const questionId = '{{ question.id }}';
 let socket = null;
 let reconnectInterval = null;
 let isConnecting = false;
+let fallbackInterval = null;
+let websocketFailed = false;
 
 function updateDisplay() {
     const resultsContainer = document.getElementById('resultsContainer');
@@ -876,8 +878,16 @@ function connectWebSocket() {
         isConnecting = false;
         socket = null;
         
+        // 연결 실패가 지속되면 fallback 사용
+        if (e.code === 1006 || e.code === 1011) {
+            websocketFailed = true;
+            console.log('WebSocket repeatedly failed, switching to fallback polling');
+            startFallbackPolling();
+            return;
+        }
+        
         // 자동 재연결 (3초 후)
-        if (!reconnectInterval) {
+        if (!reconnectInterval && !websocketFailed) {
             reconnectInterval = setInterval(() => {
                 console.log('Attempting to reconnect...');
                 connectWebSocket();
@@ -888,49 +898,134 @@ function connectWebSocket() {
     socket.onerror = function(e) {
         console.error('WebSocket error:', e);
         isConnecting = false;
+        websocketFailed = true;
+        console.log('WebSocket error occurred, switching to fallback polling');
+        startFallbackPolling();
     };
 }
 
-document.getElementById('toggleResults').addEventListener('click', function() {
-    if (!socket || socket.readyState !== WebSocket.OPEN) {
-        console.error('WebSocket is not connected');
-        return;
+function startFallbackPolling() {
+    console.log('Starting fallback polling mechanism');
+    
+    // 기존 WebSocket 재연결 시도 중단
+    if (reconnectInterval) {
+        clearInterval(reconnectInterval);
+        reconnectInterval = null;
     }
     
+    // 즉시 한 번 실행
+    fetchStatsHTTP();
+    
+    // 2초마다 폴링
+    if (!fallbackInterval) {
+        fallbackInterval = setInterval(fetchStatsHTTP, 2000);
+    }
+}
+
+function fetchStatsHTTP() {
+    fetch(`/api/stats/${questionId}/`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Cache-Control': 'no-cache'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Received data via HTTP fallback:', data);
+        showResults = data.show_results;
+        updateDisplay();
+        updateStats(data);
+    })
+    .catch(error => {
+        console.error('Error fetching stats via HTTP:', error);
+    });
+}
+
+document.getElementById('toggleResults').addEventListener('click', function() {
     this.disabled = true; // 버튼 비활성화
     
-    // WebSocket을 통해 결과 토글 요청
-    socket.send(JSON.stringify({
-        'type': 'toggle_results'
-    }));
-    
-    // 2초 후 버튼 재활성화
-    setTimeout(() => {
-        this.disabled = false;
-    }, 2000);
+    if (websocketFailed || !socket || socket.readyState !== WebSocket.OPEN) {
+        // HTTP fallback 사용
+        console.log('Using HTTP fallback for toggle');
+        fetch(`/api/toggle-results/${questionId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            showResults = data.show_results;
+            updateDisplay();
+            updateStats(data);
+        })
+        .catch(error => {
+            console.error('Error toggling results via HTTP:', error);
+        })
+        .finally(() => {
+            this.disabled = false;
+        });
+    } else {
+        // WebSocket을 통해 결과 토글 요청
+        socket.send(JSON.stringify({
+            'type': 'toggle_results'
+        }));
+        
+        // 2초 후 버튼 재활성화
+        setTimeout(() => {
+            this.disabled = false;
+        }, 2000);
+    }
 });
 
 // 페이지 로드 완료 후 초기화
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Page loaded, initializing WebSocket...');
+    console.log('Page loaded, initializing...');
     
     // 초기 상태 설정
     updateDisplay();
     
-    // WebSocket 연결
+    // WebSocket 연결 시도
     connectWebSocket();
     
-    // 페이지 포커스 시 WebSocket 연결 확인
-    window.addEventListener('focus', function() {
+    // 5초 후 WebSocket이 연결되지 않으면 fallback으로 전환
+    setTimeout(() => {
         if (!socket || socket.readyState !== WebSocket.OPEN) {
+            console.log('WebSocket connection timeout, switching to fallback');
+            websocketFailed = true;
+            startFallbackPolling();
+        }
+    }, 5000);
+    
+    // 페이지 포커스 시 연결 확인
+    window.addEventListener('focus', function() {
+        if (!websocketFailed && (!socket || socket.readyState !== WebSocket.OPEN)) {
             connectWebSocket();
+        } else if (websocketFailed && !fallbackInterval) {
+            startFallbackPolling();
         }
     });
     
     // 가시성 변경 시 연결 확인
     document.addEventListener('visibilitychange', function() {
-        if (!document.hidden && (!socket || socket.readyState !== WebSocket.OPEN)) {
-            connectWebSocket();
+        if (!document.hidden) {
+            if (!websocketFailed && (!socket || socket.readyState !== WebSocket.OPEN)) {
+                connectWebSocket();
+            } else if (websocketFailed && !fallbackInterval) {
+                startFallbackPolling();
+            }
         }
     });
 });
@@ -939,6 +1034,9 @@ document.addEventListener('DOMContentLoaded', function() {
 window.addEventListener('beforeunload', function() {
     if (reconnectInterval) {
         clearInterval(reconnectInterval);
+    }
+    if (fallbackInterval) {
+        clearInterval(fallbackInterval);
     }
     if (socket) {
         socket.close();
