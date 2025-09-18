@@ -58,15 +58,6 @@
                             <div class="stat-label">총 투표수</div>
                         </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="stat-info">
-                            <div class="stat-number" id="participantCount">0</div>
-                            <div class="stat-label">참여자수</div>
-                        </div>
-                    </div>
                 </div>
                 <div class="control-section">
                     <button id="toggleResults" class="control-button">
@@ -879,7 +870,6 @@ function updateStats(data) {
         const oProgress = document.getElementById('oProgress');
         const xProgress = document.getElementById('xProgress');
         const totalVotes = document.getElementById('totalVotes');
-        const participantCount = document.getElementById('participantCount');
         
         if (oCount) oCount.textContent = data.o_votes + '명';
         if (xCount) xCount.textContent = data.x_votes + '명';
@@ -888,7 +878,6 @@ function updateStats(data) {
         if (oProgress) oProgress.style.width = data.o_percentage + '%';
         if (xProgress) xProgress.style.width = data.x_percentage + '%';
         if (totalVotes) totalVotes.textContent = data.total_votes;
-        if (participantCount) participantCount.textContent = data.total_votes;
         
         console.log('Stats updated via WebSocket:', data);
     } catch (error) {
