@@ -82,248 +82,43 @@
 {% endblock %}
 
 {% block content %}
-<!-- 메인 콘텐츠 영역 -->
-<main class="google-style-container" role="main">
-    <!-- SEO를 위한 숨겨진 제목 -->
-    <h1 class="visually-hidden">무료 실시간 O/X 투표 만들기 - 온라인 설문조사 도구</h1>
-    
-    <!-- 로고 및 브랜딩 섹션 -->
-    <header class="logo-section">
+<!-- SEO를 위한 숨겨진 제목 -->
+<h1 class="visually-hidden">무료 실시간 O/X 투표 만들기 - 온라인 설문조사 도구</h1>
+
+<div class="google-style-container">
+    <!-- 로고 섹션 -->
+    <div class="logo-section">
         <img src="{% static 'images/logo.png' %}" alt="OX Vote - 실시간 O/X 투표 서비스 로고" class="main-logo">
-        <h2 class="service-description">간단하고 빠른 실시간 O/X 투표</h2>
-        <p class="service-features">
-            🔥 <strong>무료</strong> · 📱 <strong>QR코드 지원</strong> · ⚡ <strong>실시간 결과</strong> · 🎯 <strong>간편한 4자리 코드</strong>
-        </p>
-    </header>
+    </div>
     
-    <!-- 투표 생성 폼 -->
-    <section class="vote-creation-section">
-        <h3 class="section-title">투표 질문을 입력하고 시작해보세요</h3>
-        <form method="post" class="google-form" role="form" aria-label="투표 질문 입력 폼">
-            {% csrf_token %}
-            <div class="search-container">
-                <div class="input-wrapper">
-                    <label for="question" class="visually-hidden">투표 질문 입력</label>
-                    <textarea 
-                        class="google-input" 
-                        id="question" 
-                        name="question" 
-                        placeholder="예: 오늘 점심은 치킨이 좋을까요?"
-                        required
-                        rows="1"
-                        aria-describedby="question-help"
-                    ></textarea>
-                    <button type="submit" class="submit-btn" aria-label="투표 생성하기">
-                        <i class="fas fa-arrow-right" aria-hidden="true"></i>
-                    </button>
-                </div>
-                <div id="question-help" class="form-help">
-                    <small>💡 팁: 명확하고 간단한 질문일수록 더 많은 참여를 이끌어낼 수 있어요!</small>
-                </div>
-            </div>
-        </form>
-    </section>
-    
-    <!-- 서비스 특징 섹션 -->
-    <section class="features-section" aria-label="서비스 특징">
-        <h3 class="features-title">왜 OX Vote를 선택해야 할까요?</h3>
-        <div class="features-grid">
-            <div class="feature-item">
-                <div class="feature-icon">📱</div>
-                <h4>QR코드 자동 생성</h4>
-                <p>투표 생성 즉시 QR코드가 만들어져 참여자들이 쉽게 접근할 수 있어요</p>
-            </div>
-            <div class="feature-item">
-                <div class="feature-icon">⚡</div>
-                <h4>실시간 결과 확인</h4>
-                <p>투표 현황을 실시간으로 확인하고 결과 공개/비공개를 자유롭게 조절하세요</p>
-            </div>
-            <div class="feature-item">
-                <div class="feature-icon">🎯</div>
-                <h4>간편한 4자리 코드</h4>
-                <p>QR코드가 없어도 간단한 4자리 숫자로 투표에 참여할 수 있어요</p>
-            </div>
-            <div class="feature-item">
-                <div class="feature-icon">🆓</div>
-                <h4>완전 무료</h4>
-                <p>회원가입 없이 무료로 이용하세요. 광고도 없고 제한도 없어요</p>
+    <form method="post" class="google-form">
+        {% csrf_token %}
+        <div class="search-container">
+            <div class="input-wrapper">
+                <textarea 
+                    class="google-input" 
+                    id="question" 
+                    name="question" 
+                    placeholder="O/X 투표 질문을 입력하세요"
+                    required
+                    rows="1"
+                ></textarea>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
             </div>
         </div>
-    </section>
-    
-    <!-- 사용 사례 섹션 -->
-    <section class="use-cases-section" aria-label="사용 사례">
-        <h3 class="use-cases-title">이런 곳에서 활용해보세요</h3>
-        <div class="use-cases-list">
-            <div class="use-case-item">
-                <strong>🏢 회의실에서</strong> - 안건에 대한 즉석 의견 수렴
-            </div>
-            <div class="use-case-item">
-                <strong>🎓 교실에서</strong> - 학생들의 이해도 확인 및 퀴즈
-            </div>
-            <div class="use-case-item">
-                <strong>🎉 행사에서</strong> - 참여자들의 선호도 조사
-            </div>
-            <div class="use-case-item">
-                <strong>👥 모임에서</strong> - 다음 만남 장소나 시간 결정
-            </div>
-        </div>
-    </section>
-</main>
+    </form>
+</div>
 
 <style>
 .google-style-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     min-height: 70vh;
     padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-/* 서비스 설명 및 특징 */
-.service-description {
-    font-size: 1.8rem;
-    font-weight: 300;
-    color: #5f6368;
-    text-align: center;
-    margin: 20px 0 15px 0;
-    line-height: 1.3;
-}
-
-.service-features {
-    font-size: 1rem;
-    color: #5f6368;
-    text-align: center;
-    margin-bottom: 40px;
-    line-height: 1.5;
-}
-
-/* 투표 생성 섹션 */
-.vote-creation-section {
-    width: 100%;
-    max-width: 600px;
-    margin-bottom: 60px;
-}
-
-.section-title {
-    font-size: 1.3rem;
-    font-weight: 500;
-    color: #202124;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.form-help {
-    text-align: center;
-    margin-top: 15px;
-    color: #5f6368;
-}
-
-.form-help small {
-    font-size: 0.9rem;
-    line-height: 1.4;
-}
-
-/* 특징 섹션 */
-.features-section {
-    width: 100%;
-    margin-bottom: 60px;
-    padding: 40px 20px;
-    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-    border-radius: 20px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-}
-
-.features-title {
-    font-size: 2rem;
-    font-weight: 600;
-    color: #202124;
-    text-align: center;
-    margin-bottom: 40px;
-}
-
-.features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 30px;
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-.feature-item {
-    text-align: center;
-    padding: 30px 20px;
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 2px 15px rgba(0,0,0,0.08);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.feature-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-}
-
-.feature-icon {
-    font-size: 3rem;
-    margin-bottom: 20px;
-}
-
-.feature-item h4 {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: #202124;
-    margin-bottom: 15px;
-}
-
-.feature-item p {
-    color: #5f6368;
-    line-height: 1.6;
-    font-size: 1rem;
-}
-
-/* 사용 사례 섹션 */
-.use-cases-section {
-    width: 100%;
-    margin-bottom: 40px;
-}
-
-.use-cases-title {
-    font-size: 1.8rem;
-    font-weight: 600;
-    color: #202124;
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.use-cases-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.use-case-item {
-    padding: 20px;
-    background: white;
-    border-radius: 12px;
-    border-left: 4px solid #4285f4;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    transition: transform 0.3s ease;
-    line-height: 1.6;
-}
-
-.use-case-item:hover {
-    transform: translateX(5px);
-}
-
-.use-case-item strong {
-    color: #4285f4;
-    font-weight: 600;
 }
 
 .logo-section {
@@ -425,10 +220,6 @@
 }
 
 @media (max-width: 768px) {
-    .google-style-container {
-        padding: 15px;
-    }
-    
     .main-logo {
         max-width: 250px;
         max-height: 100px;
@@ -436,23 +227,6 @@
     
     .logo-section {
         margin-bottom: 30px;
-    }
-    
-    .service-description {
-        font-size: 1.4rem;
-    }
-    
-    .service-features {
-        font-size: 0.9rem;
-        margin-bottom: 30px;
-    }
-    
-    .vote-creation-section {
-        margin-bottom: 40px;
-    }
-    
-    .section-title {
-        font-size: 1.1rem;
     }
     
     .google-input {
@@ -470,78 +244,6 @@
         height: 36px;
         right: 7px;
         font-size: 14px;
-    }
-    
-    /* 특징 섹션 모바일 */
-    .features-section {
-        padding: 30px 15px;
-        margin-bottom: 40px;
-    }
-    
-    .features-title {
-        font-size: 1.6rem;
-        margin-bottom: 30px;
-    }
-    
-    .features-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-    
-    .feature-item {
-        padding: 25px 15px;
-    }
-    
-    .feature-icon {
-        font-size: 2.5rem;
-        margin-bottom: 15px;
-    }
-    
-    .feature-item h4 {
-        font-size: 1.1rem;
-        margin-bottom: 10px;
-    }
-    
-    .feature-item p {
-        font-size: 0.9rem;
-    }
-    
-    /* 사용 사례 섹션 모바일 */
-    .use-cases-title {
-        font-size: 1.4rem;
-        margin-bottom: 25px;
-    }
-    
-    .use-cases-list {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-    
-    .use-case-item {
-        padding: 15px;
-        font-size: 0.9rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .google-style-container {
-        padding: 10px;
-    }
-    
-    .service-description {
-        font-size: 1.2rem;
-    }
-    
-    .features-section {
-        padding: 20px 10px;
-    }
-    
-    .features-title {
-        font-size: 1.4rem;
-    }
-    
-    .feature-item {
-        padding: 20px 10px;
     }
 }
 </style>
