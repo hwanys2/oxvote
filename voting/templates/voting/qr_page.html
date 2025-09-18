@@ -31,6 +31,14 @@
                         <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code" class="qr-image">
                     </div>
                     <p class="qr-instruction">QR 코드를 스캔하세요</p>
+                    <div class="url-display">
+                        <div class="url-label">또는 직접 입력</div>
+                        <div class="simple-url">{{ simple_url }}</div>
+                        <button class="copy-url-btn" onclick="copyToClipboard('{{ simple_url }}')">
+                            <i class="fas fa-copy"></i>
+                            복사
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -324,6 +332,69 @@ body {
     font-size: 1.1rem;
     font-weight: 500;
     line-height: 1.4;
+    margin-bottom: 20px;
+}
+
+/* URL 표시 섹션 */
+.url-display {
+    text-align: center;
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #e8eaed;
+}
+
+.url-label {
+    font-size: 0.9rem;
+    color: #5f6368;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.simple-url {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #4285f4;
+    background: #ffffff;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 2px solid #e8eaed;
+    margin-bottom: 15px;
+    word-break: break-all;
+    user-select: all;
+    transition: all 0.3s ease;
+}
+
+.simple-url:hover {
+    border-color: #4285f4;
+    box-shadow: 0 2px 8px rgba(66, 133, 244, 0.1);
+}
+
+.copy-url-btn {
+    background: #4285f4;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(66, 133, 244, 0.2);
+}
+
+.copy-url-btn:hover {
+    background: #3367d6;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
+}
+
+.copy-url-btn:active {
+    transform: translateY(0);
 }
 
 /* 통계 섹션 */
@@ -1030,6 +1101,68 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// URL 복사 기능
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        // 복사 성공 피드백
+        const btn = document.querySelector('.copy-url-btn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i> 복사됨!';
+        btn.style.background = '#34a853';
+        
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.style.background = '#4285f4';
+        }, 2000);
+    }).catch(function() {
+        // 폴백: 선택하여 복사하도록 안내
+        const urlElement = document.querySelector('.simple-url');
+        const range = document.createRange();
+        range.selectNodeContents(urlElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        
+        alert('URL이 선택되었습니다. Ctrl+C(또는 Cmd+C)로 복사하세요.');
+    });
+}
+
+// 세션 활동 추적
+let activityTimer;
+
+function sendHeartbeat() {
+    // 현재 페이지가 QR 페이지이고 WebSocket이 연결되어 있으면 heartbeat 전송
+    if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify({
+            'type': 'heartbeat'
+        }));
+    } else if (websocketFailed) {
+        // HTTP 방식으로 활동 신호 전송
+        fetch(`/api/stats/${questionId}/`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Cache-Control': 'no-cache'
+            }
+        }).catch(error => {
+            console.log('Heartbeat failed:', error);
+        });
+    }
+}
+
+function resetActivityTimer() {
+    clearTimeout(activityTimer);
+    activityTimer = setTimeout(() => {
+        // 10분간 활동이 없으면 heartbeat 중단
+        console.log('No activity for 10 minutes, stopping heartbeat');
+    }, 600000); // 10분
+}
+
+// 사용자 활동 감지
+['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'].forEach(event => {
+    document.addEventListener(event, resetActivityTimer, true);
+});
+
 // 페이지 언로드 시 정리
 window.addEventListener('beforeunload', function() {
     if (reconnectInterval) {
@@ -1038,9 +1171,20 @@ window.addEventListener('beforeunload', function() {
     if (fallbackInterval) {
         clearInterval(fallbackInterval);
     }
+    if (activityTimer) {
+        clearTimeout(activityTimer);
+    }
     if (socket) {
         socket.close();
     }
+});
+
+// 페이지 로드 시 활동 타이머 시작
+document.addEventListener('DOMContentLoaded', function() {
+    resetActivityTimer();
+    
+    // 30초마다 heartbeat 전송
+    setInterval(sendHeartbeat, 30000);
 });
 </script>
 {% endblock %}

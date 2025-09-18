@@ -3,10 +3,17 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),
+    # UUID 기반 URL (기존)
     path('qr/<uuid:question_id>/', views.qr_page, name='qr_page'),
     path('vote/<uuid:question_id>/', views.vote_page, name='vote_page'),
     path('result/<uuid:question_id>/', views.vote_result, name='vote_result'),
     path('api/toggle-results/<uuid:question_id>/', views.toggle_results, name='toggle_results'),
     path('api/stats/<uuid:question_id>/', views.get_vote_stats, name='vote_stats'),
+    # 간단한 코드 기반 URL (새로 추가)
+    path('<str:simple_code>/', views.vote_by_code, name='vote_by_code'),
+    path('qr/code/<str:simple_code>/', views.qr_page_by_code, name='qr_page_by_code'),
+    path('result/code/<str:simple_code>/', views.vote_result_by_code, name='vote_result_by_code'),
+    path('api/toggle-results/code/<str:simple_code>/', views.toggle_results_by_code, name='toggle_results_by_code'),
+    path('api/stats/code/<str:simple_code>/', views.get_vote_stats_by_code, name='vote_stats_by_code'),
     path('privacy/', views.privacy, name='privacy'),
 ]
