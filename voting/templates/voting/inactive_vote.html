@@ -1,0 +1,224 @@
+{% extends 'voting/base.html' %}
+{% load static %}
+
+{% block title %}투표가 종료되었습니다{% endblock %}
+
+{% block content %}
+<div class="inactive-container">
+    <div class="inactive-card">
+        <!-- 아이콘 섹션 -->
+        <div class="inactive-icon">
+            <i class="fas fa-hourglass-end"></i>
+        </div>
+        
+        <!-- 메시지 섹션 -->
+        <div class="inactive-content">
+            <h1 class="inactive-title">투표가 종료되었습니다</h1>
+            <p class="inactive-message">
+                이 투표는 더 이상 활성화되어 있지 않습니다.<br>
+                투표 생성자가 투표를 종료했거나 시간이 만료되었을 수 있습니다.
+            </p>
+            
+            {% if question %}
+            <div class="question-info">
+                <div class="question-label">종료된 투표:</div>
+                <div class="question-text">{{ question.text }}</div>
+                <div class="question-code">코드: {{ question.simple_code }}</div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- 액션 버튼 -->
+        <div class="inactive-actions">
+            <a href="{% url 'home' %}" class="home-button">
+                <i class="fas fa-home"></i>
+                새 투표 만들기
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.inactive-container {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.inactive-card {
+    background: white;
+    border-radius: 24px;
+    padding: 60px 40px;
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.1),
+        0 8px 16px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f1f3f4;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.inactive-icon {
+    font-size: 4rem;
+    color: #9aa0a6;
+    margin-bottom: 30px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
+
+.inactive-content {
+    margin-bottom: 40px;
+}
+
+.inactive-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #5f6368;
+    margin-bottom: 20px;
+    line-height: 1.3;
+}
+
+.inactive-message {
+    font-size: 1.1rem;
+    color: #80868b;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.question-info {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 25px;
+    border-left: 4px solid #ea4335;
+}
+
+.question-label {
+    font-size: 0.9rem;
+    color: #5f6368;
+    font-weight: 500;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.question-text {
+    font-size: 1.1rem;
+    color: #202124;
+    font-weight: 500;
+    margin-bottom: 8px;
+    word-break: break-word;
+}
+
+.question-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    color: #ea4335;
+    font-weight: 600;
+}
+
+.home-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #4285f4 0%, #3367d6 100%);
+    color: white;
+    text-decoration: none;
+    padding: 16px 32px;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
+}
+
+.home-button:hover {
+    background: linear-gradient(135deg, #3367d6 0%, #2851a3 100%);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(66, 133, 244, 0.4);
+    text-decoration: none;
+}
+
+.home-button:active {
+    transform: translateY(0);
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .inactive-container {
+        padding: 15px;
+        min-height: 70vh;
+    }
+    
+    .inactive-card {
+        padding: 40px 25px;
+        border-radius: 20px;
+    }
+    
+    .inactive-icon {
+        font-size: 3rem;
+        margin-bottom: 25px;
+    }
+    
+    .inactive-title {
+        font-size: 1.6rem;
+        margin-bottom: 15px;
+    }
+    
+    .inactive-message {
+        font-size: 1rem;
+        margin-bottom: 25px;
+    }
+    
+    .question-info {
+        padding: 15px;
+        margin-top: 20px;
+    }
+    
+    .home-button {
+        padding: 14px 28px;
+        font-size: 1rem;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .inactive-card {
+        padding: 30px 20px;
+    }
+    
+    .inactive-title {
+        font-size: 1.4rem;
+    }
+    
+    .inactive-message {
+        font-size: 0.95rem;
+    }
+    
+    .home-button {
+        padding: 12px 24px;
+        font-size: 0.95rem;
+    }
+}
+</style>
+{% endblock %}
