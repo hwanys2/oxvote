@@ -772,7 +772,9 @@ body {
 <script>
 let showResults = {{ question.show_results|yesno:"true,false" }};
 const questionId = '{{ question.id }}';
-let isUpdating = false;
+let socket = null;
+let reconnectInterval = null;
+let isConnecting = false;
 
 function updateDisplay() {
     const resultsContainer = document.getElementById('resultsContainer');
@@ -815,102 +817,132 @@ function updateStats(data) {
         if (totalVotes) totalVotes.textContent = data.total_votes;
         if (participantCount) participantCount.textContent = data.total_votes;
         
-        console.log('Stats updated:', data); // 디버깅용
+        console.log('Stats updated via WebSocket:', data);
     } catch (error) {
         console.error('Error updating stats:', error);
     }
 }
 
-function fetchStats() {
-    if (isUpdating) return; // 중복 요청 방지
+function connectWebSocket() {
+    if (isConnecting || (socket && socket.readyState === WebSocket.CONNECTING)) {
+        return;
+    }
     
-    isUpdating = true;
+    isConnecting = true;
     
-    fetch(`/api/stats/${questionId}/`, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Cache-Control': 'no-cache'
+    // WebSocket URL 구성 (HTTPS인 경우 wss, HTTP인 경우 ws)
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//${window.location.host}/ws/vote/${questionId}/`;
+    
+    console.log('Connecting to WebSocket:', wsUrl);
+    
+    socket = new WebSocket(wsUrl);
+    
+    socket.onopen = function(e) {
+        console.log('WebSocket connection opened');
+        isConnecting = false;
+        
+        // 연결 재시도 인터벌 정리
+        if (reconnectInterval) {
+            clearInterval(reconnectInterval);
+            reconnectInterval = null;
         }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        
+        // 초기 통계 요청
+        socket.send(JSON.stringify({
+            'type': 'get_stats'
+        }));
+    };
+    
+    socket.onmessage = function(e) {
+        try {
+            const data = JSON.parse(e.data);
+            console.log('WebSocket message received:', data);
+            
+            if (data.type === 'vote_stats') {
+                showResults = data.data.show_results;
+                updateDisplay();
+                updateStats(data.data);
+            } else if (data.type === 'error') {
+                console.error('WebSocket error:', data.message);
+            }
+        } catch (error) {
+            console.error('Error parsing WebSocket message:', error);
         }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Received data:', data); // 디버깅용
-        showResults = data.show_results;
-        updateDisplay();
-        updateStats(data);
-    })
-    .catch(error => {
-        console.error('Error fetching stats:', error);
-    })
-    .finally(() => {
-        isUpdating = false;
-    });
+    };
+    
+    socket.onclose = function(e) {
+        console.log('WebSocket connection closed:', e.code, e.reason);
+        isConnecting = false;
+        socket = null;
+        
+        // 자동 재연결 (3초 후)
+        if (!reconnectInterval) {
+            reconnectInterval = setInterval(() => {
+                console.log('Attempting to reconnect...');
+                connectWebSocket();
+            }, 3000);
+        }
+    };
+    
+    socket.onerror = function(e) {
+        console.error('WebSocket error:', e);
+        isConnecting = false;
+    };
 }
 
 document.getElementById('toggleResults').addEventListener('click', function() {
-    if (isUpdating) return;
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
+        console.error('WebSocket is not connected');
+        return;
+    }
     
     this.disabled = true; // 버튼 비활성화
     
-    fetch(`/api/toggle-results/${questionId}/`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        showResults = data.show_results;
-        updateDisplay();
-        updateStats(data);
-    })
-    .catch(error => {
-        console.error('Error toggling results:', error);
-    })
-    .finally(() => {
-        this.disabled = false; // 버튼 재활성화
-    });
+    // WebSocket을 통해 결과 토글 요청
+    socket.send(JSON.stringify({
+        'type': 'toggle_results'
+    }));
+    
+    // 2초 후 버튼 재활성화
+    setTimeout(() => {
+        this.disabled = false;
+    }, 2000);
 });
 
 // 페이지 로드 완료 후 초기화
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Page loaded, initializing...'); // 디버깅용
+    console.log('Page loaded, initializing WebSocket...');
     
     // 초기 상태 설정
     updateDisplay();
     
-    // 초기 통계 로드
-    fetchStats();
+    // WebSocket 연결
+    connectWebSocket();
     
-    // 1초마다 통계 업데이트 (더 빠른 업데이트)
-    setInterval(fetchStats, 1000);
+    // 페이지 포커스 시 WebSocket 연결 확인
+    window.addEventListener('focus', function() {
+        if (!socket || socket.readyState !== WebSocket.OPEN) {
+            connectWebSocket();
+        }
+    });
     
-    // 페이지 포커스 시 즉시 업데이트
-    window.addEventListener('focus', fetchStats);
-    
-    // 가시성 변경 시 업데이트
+    // 가시성 변경 시 연결 확인
     document.addEventListener('visibilitychange', function() {
-        if (!document.hidden) {
-            fetchStats();
+        if (!document.hidden && (!socket || socket.readyState !== WebSocket.OPEN)) {
+            connectWebSocket();
         }
     });
 });
 
 // 페이지 언로드 시 정리
 window.addEventListener('beforeunload', function() {
-    isUpdating = true; // 추가 요청 방지
+    if (reconnectInterval) {
+        clearInterval(reconnectInterval);
+    }
+    if (socket) {
+        socket.close();
+    }
 });
 </script>
 {% endblock %}

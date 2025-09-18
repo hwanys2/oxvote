@@ -51,12 +51,14 @@ CSRF_TRUSTED_ORIGINS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',  # Channels ASGI server
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',  # Django Channels
     'voting',
 ]
 
@@ -89,6 +91,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'oxvote.wsgi.application'
+ASGI_APPLICATION = 'oxvote.asgi.application'
 
 
 # Database
@@ -176,3 +179,13 @@ if not DEBUG:
     
     # Referrer policy
     SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+
+# Channels 설정
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [os.getenv('REDIS_URL', 'redis://localhost:6379')],
+        },
+    },
+}
