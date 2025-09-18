@@ -57,7 +57,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'channels',
     'voting',
 ]
 
@@ -90,14 +89,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'oxvote.wsgi.application'
-ASGI_APPLICATION = 'oxvote.asgi.application'
-
-# Channels
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer'
-    }
-}
 
 
 # Database
