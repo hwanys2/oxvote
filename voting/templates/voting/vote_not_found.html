@@ -1,0 +1,323 @@
+{% extends 'voting/base.html' %}
+{% load static %}
+
+{% block title %}투표를 찾을 수 없습니다{% endblock %}
+
+{% block content %}
+<div class="not-found-container">
+    <div class="not-found-card">
+        <!-- 아이콘 섹션 -->
+        <div class="not-found-icon">
+            <i class="fas fa-search"></i>
+            <div class="question-mark">?</div>
+        </div>
+        
+        <!-- 메시지 섹션 -->
+        <div class="not-found-content">
+            <h1 class="not-found-title">투표를 찾을 수 없습니다</h1>
+            <p class="not-found-message">
+                입력하신 코드에 해당하는 투표가 존재하지 않습니다.<br>
+                코드를 다시 확인해주세요.
+            </p>
+            
+            {% if searched_code %}
+            <div class="code-info">
+                <div class="code-label">찾으신 코드:</div>
+                <div class="code-text">{{ searched_code }}</div>
+            </div>
+            {% endif %}
+            
+            <div class="help-info">
+                <h3>💡 확인해보세요</h3>
+                <ul>
+                    <li>4자리 숫자 코드가 정확한지 확인해주세요</li>
+                    <li>투표가 이미 종료되었을 수 있습니다</li>
+                    <li>투표 생성자에게 올바른 링크를 요청해보세요</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- 액션 버튼 -->
+        <div class="not-found-actions">
+            <a href="{% url 'home' %}" class="home-button">
+                <i class="fas fa-plus"></i>
+                새 투표 만들기
+            </a>
+            <button onclick="history.back()" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+                이전 페이지
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+.not-found-container {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.not-found-card {
+    background: white;
+    border-radius: 24px;
+    padding: 60px 40px;
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.1),
+        0 8px 16px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f1f3f4;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.not-found-icon {
+    position: relative;
+    font-size: 4rem;
+    color: #9aa0a6;
+    margin-bottom: 30px;
+    display: inline-block;
+}
+
+.question-mark {
+    position: absolute;
+    top: -10px;
+    right: -15px;
+    font-size: 2rem;
+    color: #ea4335;
+    background: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(234, 67, 53, 0.2);
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+.not-found-content {
+    margin-bottom: 40px;
+}
+
+.not-found-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #5f6368;
+    margin-bottom: 20px;
+    line-height: 1.3;
+}
+
+.not-found-message {
+    font-size: 1.1rem;
+    color: #80868b;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.code-info {
+    background: #fef7e0;
+    border: 1px solid #fbbc04;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    border-left: 4px solid #fbbc04;
+}
+
+.code-label {
+    font-size: 0.9rem;
+    color: #e8710a;
+    font-weight: 500;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.code-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.5rem;
+    color: #e8710a;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.help-info {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 25px;
+    text-align: left;
+    margin-bottom: 30px;
+}
+
+.help-info h3 {
+    font-size: 1.1rem;
+    color: #4285f4;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.help-info ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.help-info li {
+    padding: 8px 0;
+    color: #5f6368;
+    position: relative;
+    padding-left: 20px;
+}
+
+.help-info li:before {
+    content: "•";
+    color: #4285f4;
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+
+.not-found-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.home-button, .back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.home-button {
+    background: linear-gradient(135deg, #4285f4 0%, #3367d6 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
+}
+
+.home-button:hover {
+    background: linear-gradient(135deg, #3367d6 0%, #2851a3 100%);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(66, 133, 244, 0.4);
+    text-decoration: none;
+}
+
+.back-button {
+    background: #f8f9fa;
+    color: #5f6368;
+    border: 2px solid #e8eaed;
+}
+
+.back-button:hover {
+    background: #e8eaed;
+    color: #202124;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .not-found-container {
+        padding: 15px;
+        min-height: 70vh;
+    }
+    
+    .not-found-card {
+        padding: 40px 25px;
+        border-radius: 20px;
+    }
+    
+    .not-found-icon {
+        font-size: 3rem;
+        margin-bottom: 25px;
+    }
+    
+    .question-mark {
+        width: 35px;
+        height: 35px;
+        font-size: 1.5rem;
+        right: -10px;
+        top: -5px;
+    }
+    
+    .not-found-title {
+        font-size: 1.6rem;
+        margin-bottom: 15px;
+    }
+    
+    .not-found-message {
+        font-size: 1rem;
+        margin-bottom: 25px;
+    }
+    
+    .code-text {
+        font-size: 1.3rem;
+    }
+    
+    .help-info {
+        padding: 20px;
+        margin-bottom: 25px;
+    }
+    
+    .not-found-actions {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .home-button, .back-button {
+        padding: 12px 24px;
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .not-found-card {
+        padding: 30px 20px;
+    }
+    
+    .not-found-title {
+        font-size: 1.4rem;
+    }
+    
+    .not-found-message {
+        font-size: 0.95rem;
+    }
+    
+    .code-text {
+        font-size: 1.2rem;
+        letter-spacing: 1px;
+    }
+}
+</style>
+{% endblock %}

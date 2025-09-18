@@ -33,10 +33,13 @@ def get_question_by_code(simple_code, require_active=True):
     if not re.match(r'^\d{4}$', simple_code):
         return None
     
-    if require_active:
-        return get_object_or_404(Question, simple_code=simple_code, is_active=True)
-    else:
-        return get_object_or_404(Question, simple_code=simple_code)
+    try:
+        if require_active:
+            return Question.objects.get(simple_code=simple_code, is_active=True)
+        else:
+            return Question.objects.get(simple_code=simple_code)
+    except Question.DoesNotExist:
+        return None
 
 def update_session_activity(request, question):
     """세션 활동 업데이트"""
@@ -175,12 +178,15 @@ def get_vote_stats(request, question_id):
 def vote_by_code(request, simple_code):
     """간단한 코드로 투표 페이지 접근"""
     # 먼저 질문이 존재하는지 확인 (활성/비활성 상관없이)
-    try:
-        question = get_question_by_code(simple_code, require_active=False)
-        if not question.is_active:
-            return render(request, 'voting/inactive_vote.html', {'question': question})
-    except:
-        question = get_question_by_code(simple_code)  # 404 발생시킴
+    question = get_question_by_code(simple_code, require_active=False)
+    
+    if question is None:
+        # 존재하지 않는 코드
+        return render(request, 'voting/vote_not_found.html', {'searched_code': simple_code})
+    
+    if not question.is_active:
+        # 비활성 투표
+        return render(request, 'voting/inactive_vote.html', {'question': question})
     
     client_fingerprint = get_client_fingerprint(request)
     
@@ -207,12 +213,15 @@ def vote_by_code(request, simple_code):
 def qr_page_by_code(request, simple_code):
     """간단한 코드로 QR 페이지 접근"""
     # 먼저 질문이 존재하는지 확인 (활성/비활성 상관없이)
-    try:
-        question = get_question_by_code(simple_code, require_active=False)
-        if not question.is_active:
-            return render(request, 'voting/inactive_vote.html', {'question': question})
-    except:
-        question = get_question_by_code(simple_code)  # 404 발생시킴
+    question = get_question_by_code(simple_code, require_active=False)
+    
+    if question is None:
+        # 존재하지 않는 코드
+        return render(request, 'voting/vote_not_found.html', {'searched_code': simple_code})
+    
+    if not question.is_active:
+        # 비활성 투표
+        return render(request, 'voting/inactive_vote.html', {'question': question})
     
     # 세션 활동 업데이트
     update_session_activity(request, question)
@@ -245,12 +254,15 @@ def qr_page_by_code(request, simple_code):
 def vote_result_by_code(request, simple_code):
     """간단한 코드로 결과 페이지 접근"""
     # 먼저 질문이 존재하는지 확인 (활성/비활성 상관없이)
-    try:
-        question = get_question_by_code(simple_code, require_active=False)
-        if not question.is_active:
-            return render(request, 'voting/inactive_vote.html', {'question': question})
-    except:
-        question = get_question_by_code(simple_code)  # 404 발생시킴
+    question = get_question_by_code(simple_code, require_active=False)
+    
+    if question is None:
+        # 존재하지 않는 코드
+        return render(request, 'voting/vote_not_found.html', {'searched_code': simple_code})
+    
+    if not question.is_active:
+        # 비활성 투표
+        return render(request, 'voting/inactive_vote.html', {'question': question})
     
     context = {
         'question': question,
@@ -262,12 +274,13 @@ def vote_result_by_code(request, simple_code):
 @require_POST
 def toggle_results_by_code(request, simple_code):
     """간단한 코드로 결과 보이기/숨기기 토글"""
-    try:
-        question = get_question_by_code(simple_code, require_active=False)
-        if not question.is_active:
-            return JsonResponse({'error': 'Voting is inactive'}, status=410)
-    except:
-        question = get_question_by_code(simple_code)  # 404 발생시킴
+    question = get_question_by_code(simple_code, require_active=False)
+    
+    if question is None:
+        return JsonResponse({'error': 'Vote not found'}, status=404)
+    
+    if not question.is_active:
+        return JsonResponse({'error': 'Voting is inactive'}, status=410)
     
     # 세션 활동 업데이트
     update_session_activity(request, question)
@@ -284,12 +297,13 @@ def toggle_results_by_code(request, simple_code):
 
 def get_vote_stats_by_code(request, simple_code):
     """간단한 코드로 실시간 투표 통계 API"""
-    try:
-        question = get_question_by_code(simple_code, require_active=False)
-        if not question.is_active:
-            return JsonResponse({'error': 'Voting is inactive'}, status=410)
-    except:
-        question = get_question_by_code(simple_code)  # 404 발생시킴
+    question = get_question_by_code(simple_code, require_active=False)
+    
+    if question is None:
+        return JsonResponse({'error': 'Vote not found'}, status=404)
+    
+    if not question.is_active:
+        return JsonResponse({'error': 'Voting is inactive'}, status=410)
     
     return JsonResponse({
         'show_results': question.show_results,
@@ -299,6 +313,40 @@ def get_vote_stats_by_code(request, simple_code):
         'o_votes': question.o_votes,
         'x_votes': question.x_votes,
     })
+
+@csrf_exempt
+@require_POST
+def end_vote(request, question_id):
+    """투표 종료"""
+    question = get_object_or_404(Question, id=question_id)
+    
+    # 세션 활동 업데이트
+    update_session_activity(request, question)
+    
+    # 투표 비활성화
+    question.deactivate()
+    
+    return JsonResponse({'success': True, 'message': 'Vote ended successfully'})
+
+@csrf_exempt
+@require_POST
+def end_vote_by_code(request, simple_code):
+    """간단한 코드로 투표 종료"""
+    question = get_question_by_code(simple_code, require_active=False)
+    
+    if question is None:
+        return JsonResponse({'error': 'Vote not found'}, status=404)
+    
+    if not question.is_active:
+        return JsonResponse({'error': 'Vote already inactive'}, status=410)
+    
+    # 세션 활동 업데이트
+    update_session_activity(request, question)
+    
+    # 투표 비활성화
+    question.deactivate()
+    
+    return JsonResponse({'success': True, 'message': 'Vote ended successfully'})
 
 # --- 정적 페이지 ---
 
