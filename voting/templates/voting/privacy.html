@@ -1,0 +1,51 @@
+{% extends 'voting/base.html' %}
+
+{% block title %}개인정보처리방침{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body p-4">
+        <h3 class="mb-3" style="font-weight:700;">개인정보처리방침</h3>
+        <p class="text-muted mb-4" style="font-size:0.95rem;">시행일자: 2025-09-18</p>
+
+        <p style="line-height:1.7;">본 서비스(이하 "서비스")는 O/X 투표 기능 제공을 위해 최소한의 정보만을 처리합니다. 현재 서비스는 회원 가입/로그인이 없으며, 사용자의 이름, 이메일 등 직접 식별 가능한 정보를 수집하지 않습니다.</p>
+
+        <h5 class="mt-4" style="font-weight:600;">1. 처리하는 개인정보 항목</h5>
+        <ul class="mt-2" style="line-height:1.8;">
+            <li>투표 식별 목적의 기술적 정보: IP 주소, 브라우저 정보(User-Agent)로부터 생성된 해시값(비가역적 형태)</li>
+            <li>투표 선택 정보: O 또는 X</li>
+        </ul>
+        <p class="text-muted" style="font-size:0.95rem;">설명: 동일 사용자의 중복 투표 방지를 위해 IP와 브라우저 정보를 조합하여 일방향 해시값으로 변환하여 저장합니다. 이 값 자체로는 개인을 직접 식별할 수 없습니다.</p>
+
+        <h5 class="mt-4" style="font-weight:600;">2. 수집 및 이용 목적</h5>
+        <ul class="mt-2" style="line-height:1.8;">
+            <li>중복 투표 방지 및 투표 결과 집계</li>
+            <li>서비스 안정성 확보 및 부정 이용 방지</li>
+        </ul>
+
+        <h5 class="mt-4" style="font-weight:600;">3. 보유 및 이용 기간</h5>
+        <p style="line-height:1.7;">투표 데이터는 해당 투표(질문)가 유지되는 동안 보관되며, 투표 삭제 시 관련 데이터도 함께 삭제됩니다. 법령에 특별한 규정이 있는 경우 이를 따릅니다.</p>
+
+        <h5 class="mt-4" style="font-weight:600;">4. 처리 위탁 및 제3자 제공</h5>
+        <p style="line-height:1.7;">서비스는 이용자의 개인정보를 제3자에게 제공하거나 외부 업체에 위탁하지 않습니다.</p>
+
+        <h5 class="mt-4" style="font-weight:600;">5. 쿠키 및 유사 기술의 사용</h5>
+        <p style="line-height:1.7;">본 서비스는 서비스 제공을 위해 필수적인 범위 내에서만 기술적 정보를 처리하며, 광고/추적 목적의 쿠키를 사용하지 않습니다.</p>
+
+        <h5 class="mt-4" style="font-weight:600;">6. 이용자의 권리</h5>
+        <p style="line-height:1.7;">투표 데이터는 개인 식별 정보 없이 집계 형태로 처리됩니다. 다만, 투표 생성자 또는 관리자 요청 시 질문(투표) 삭제를 통해 관련 데이터 삭제가 가능합니다.</p>
+
+        <h5 class="mt-4" style="font-weight:600;">7. 안전성 확보 조치</h5>
+        <ul class="mt-2" style="line-height:1.8;">
+            <li>일방향 해시 처리로 직접 식별 정보 미저장</li>
+            <li>접근 권한 최소화 및 서버 보안 업데이트 준수</li>
+        </ul>
+
+        <h5 class="mt-4" style="font-weight:600;">8. 문의처</h5>
+        <p style="line-height:1.7;">개인정보 처리에 관한 문의는 아래 페이지를 통해 연락 바랍니다.<br>
+        <a href="https://proximal-stranger-fa0.notion.site/1cb53a4832438028be97d7cb1b2ddb5f?pvs=4" target="_blank" rel="noopener noreferrer">개발자 페이지</a></p>
+
+        <p class="text-muted mt-4" style="font-size:0.9rem;">본 방침은 서비스 기능 변경 또는 관련 법령 개정에 따라 수정될 수 있으며, 변경 시 본 페이지에 공지합니다.</p>
+    </div>
+</div>
+{% endblock %} 

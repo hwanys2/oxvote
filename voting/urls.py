@@ -8,4 +8,5 @@ urlpatterns = [
     path('result/<uuid:question_id>/', views.vote_result, name='vote_result'),
     path('api/toggle-results/<uuid:question_id>/', views.toggle_results, name='toggle_results'),
     path('api/stats/<uuid:question_id>/', views.get_vote_stats, name='vote_stats'),
+    path('privacy/', views.privacy, name='privacy'),
 ]

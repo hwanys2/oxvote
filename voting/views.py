@@ -127,3 +127,9 @@ def get_vote_stats(request, question_id):
         'o_votes': question.o_votes,
         'x_votes': question.x_votes,
     })
+
+# --- 정적 페이지 ---
+
+def privacy(request):
+    """개인정보처리방침 페이지"""
+    return render(request, 'voting/privacy.html')
