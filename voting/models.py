@@ -5,11 +5,19 @@ import random
 import string
 
 def generate_simple_code():
-    """중복되지 않는 4자리 코드 생성"""
-    while True:
+    """중복되지 않는 4자리 코드 생성 (활성 투표만 체크, 비활성 코드는 재사용 가능)"""
+    max_attempts = 100  # 무한 루프 방지
+    
+    for _ in range(max_attempts):
+        # 4자리 숫자 코드 생성 (10,000개 가능)
         code = ''.join(random.choices(string.digits, k=4))
+        
+        # 활성 투표에만 해당 코드가 있는지 확인
         if not Question.objects.filter(simple_code=code, is_active=True).exists():
             return code
+    
+    # 만약 100번 시도해도 안되면 예외 발생 (거의 불가능)
+    raise Exception("코드 생성에 실패했습니다. 잠시 후 다시 시도해주세요.")
 
 class Question(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

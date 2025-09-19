@@ -3,6 +3,8 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),
+    # 정적 페이지 (간단한 코드 패턴보다 먼저 정의)
+    path('privacy/', views.privacy, name='privacy'),
     # UUID 기반 URL (기존)
     path('qr/<uuid:question_id>/', views.qr_page, name='qr_page'),
     path('vote/<uuid:question_id>/', views.vote_page, name='vote_page'),
@@ -17,5 +19,4 @@ urlpatterns = [
     path('api/toggle-results/code/<str:simple_code>/', views.toggle_results_by_code, name='toggle_results_by_code'),
     path('api/stats/code/<str:simple_code>/', views.get_vote_stats_by_code, name='vote_stats_by_code'),
     path('api/end-vote/code/<str:simple_code>/', views.end_vote_by_code, name='end_vote_by_code'),
-    path('privacy/', views.privacy, name='privacy'),
 ]

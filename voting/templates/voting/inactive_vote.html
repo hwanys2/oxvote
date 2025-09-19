@@ -23,8 +23,38 @@
             <div class="question-info">
                 <div class="question-label">종료된 투표:</div>
                 <div class="question-text">{{ question.text }}</div>
-                <div class="question-code">코드: {{ question.simple_code }}</div>
+                <!-- 종료된 투표에서는 코드를 표시하지 않음 -->
             </div>
+            
+            <!-- 최종 투표 결과 표시 -->
+            {% if question.total_votes > 0 %}
+            <div class="final-results">
+                <div class="results-label">최종 투표 결과</div>
+                <div class="results-stats">
+                    <div class="vote-count">총 {{ question.total_votes }}표</div>
+                    <div class="percentage-breakdown">
+                        <span class="o-percentage">{{ question.o_percentage }}% O</span>
+                        <span class="vs-separator">vs</span>
+                        <span class="x-percentage">{{ question.x_percentage }}% X</span>
+                    </div>
+                </div>
+                
+                <!-- 결과 바 차트 -->
+                <div class="results-bar">
+                    <div class="o-bar" style="width: {{ question.o_percentage }}%">
+                        <span class="bar-label">O {{ question.o_votes }}표</span>
+                    </div>
+                    <div class="x-bar" style="width: {{ question.x_percentage }}%">
+                        <span class="bar-label">X {{ question.x_votes }}표</span>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="no-votes">
+                <div class="no-votes-label">아직 투표가 없습니다</div>
+                <div class="no-votes-message">이 투표에는 아무도 참여하지 않았습니다.</div>
+            </div>
+            {% endif %}
             {% endif %}
         </div>
         
@@ -163,6 +193,114 @@
     transform: translateY(0);
 }
 
+/* 최종 결과 스타일 */
+.final-results {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 25px;
+    margin-top: 25px;
+    border-left: 4px solid #4285f4;
+}
+
+.results-label {
+    font-size: 1.1rem;
+    color: #4285f4;
+    font-weight: 600;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.results-stats {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.vote-count {
+    font-size: 1rem;
+    color: #5f6368;
+    margin-bottom: 10px;
+}
+
+.percentage-breakdown {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.o-percentage {
+    color: #34a853;
+}
+
+.vs-separator {
+    color: #9aa0a6;
+    font-size: 1rem;
+}
+
+.x-percentage {
+    color: #ea4335;
+}
+
+.results-bar {
+    display: flex;
+    height: 40px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+.o-bar {
+    background: linear-gradient(135deg, #34a853 0%, #2d8f47 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-width: 60px;
+}
+
+.x-bar {
+    background: linear-gradient(135deg, #ea4335 0%, #d33b2c 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-width: 60px;
+}
+
+.bar-label {
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    white-space: nowrap;
+}
+
+/* 투표가 없는 경우 */
+.no-votes {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 25px;
+    text-align: center;
+}
+
+.no-votes-label {
+    font-size: 1rem;
+    color: #856404;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.no-votes-message {
+    font-size: 0.9rem;
+    color: #856404;
+    opacity: 0.8;
+}
+
 /* 모바일 반응형 */
 @media (max-width: 768px) {
     .inactive-container {
@@ -200,6 +338,24 @@
         font-size: 1rem;
         gap: 10px;
     }
+    
+    .final-results {
+        padding: 20px;
+        margin-top: 20px;
+    }
+    
+    .percentage-breakdown {
+        font-size: 1.1rem;
+        gap: 12px;
+    }
+    
+    .results-bar {
+        height: 35px;
+    }
+    
+    .bar-label {
+        font-size: 0.8rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -218,6 +374,23 @@
     .home-button {
         padding: 12px 24px;
         font-size: 0.95rem;
+    }
+    
+    .final-results {
+        padding: 15px;
+    }
+    
+    .percentage-breakdown {
+        font-size: 1rem;
+        gap: 10px;
+    }
+    
+    .results-bar {
+        height: 30px;
+    }
+    
+    .bar-label {
+        font-size: 0.75rem;
     }
 }
 </style>
