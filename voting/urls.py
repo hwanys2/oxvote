@@ -5,6 +5,7 @@ urlpatterns = [
     path('', views.home, name='home'),
     # 정적 페이지 (간단한 코드 패턴보다 먼저 정의)
     path('privacy/', views.privacy, name='privacy'),
+    path('ads.txt', views.ads_txt, name='ads_txt'),
     # UUID 기반 URL (기존)
     path('qr/<uuid:question_id>/', views.qr_page, name='qr_page'),
     path('vote/<uuid:question_id>/', views.vote_page, name='vote_page'),

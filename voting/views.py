@@ -353,3 +353,8 @@ def end_vote_by_code(request, simple_code):
 def privacy(request):
     """개인정보처리방침 페이지"""
     return render(request, 'voting/privacy.html')
+
+def ads_txt(request):
+    """ads.txt 파일 서빙"""
+    content = "google.com, pub-8902099051011521, DIRECT, f08c47fec0942fa0"
+    return HttpResponse(content, content_type='text/plain')
