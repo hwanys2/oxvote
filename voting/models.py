@@ -20,12 +20,18 @@ def generate_simple_code():
     raise Exception("코드 생성에 실패했습니다. 잠시 후 다시 시도해주세요.")
 
 class Question(models.Model):
+    QUESTION_TYPES = [
+        ('OX', 'O/X 투표'),
+        ('SHORT_ANSWER', '단답형'),
+    ]
+    
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     text = models.TextField(verbose_name="질문")
+    question_type = models.CharField(max_length=20, choices=QUESTION_TYPES, default='OX', verbose_name="질문 유형")
     simple_code = models.CharField(max_length=4, unique=False, blank=True, verbose_name="간단 코드")
     created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
-    show_results = models.BooleanField(default=False)  # 결과 보이기/숨기기
+    show_results = models.BooleanField(default=False)  # 결과 보이기/숨기기 (O/X 전용)
     creator_session = models.CharField(max_length=40, blank=True, verbose_name="생성자 세션")  # 세션 관리용
     last_activity = models.DateTimeField(default=timezone.now, verbose_name="마지막 활동")  # 활성 상태 추적
     
@@ -87,3 +93,18 @@ class Vote(models.Model):
     
     def __str__(self):
         return f"{self.question.text[:30]} - {self.choice}"
+
+class ShortAnswerResponse(models.Model):
+    """단답형 응답 모델 (한 사용자가 여러 번 응답 가능)"""
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='short_answers')
+    response_text = models.CharField(max_length=200, verbose_name="응답 내용")
+    client_fingerprint = models.CharField(max_length=32, default='unknown', verbose_name="클라이언트 식별자")
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['question', 'created_at']),
+        ]
+    
+    def __str__(self):
+        return f"{self.question.text[:30]} - {self.response_text[:30]}"
