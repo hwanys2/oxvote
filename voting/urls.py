@@ -25,6 +25,7 @@ urlpatterns = [
     path('api/stats/code/<str:simple_code>/', views.get_vote_stats_by_code, name='vote_stats_by_code'),
     path('api/end-vote/code/<str:simple_code>/', views.end_vote_by_code, name='end_vote_by_code'),
     # 간단한 코드 기반 URL - 단답형
+    path('short-answer/vote/code/<str:simple_code>/', views.short_answer_vote_by_code, name='short_answer_vote_by_code'),
     path('short-answer/qr/code/<str:simple_code>/', views.short_answer_qr_page_by_code, name='short_answer_qr_page_by_code'),
     path('api/short-answer-stats/code/<str:simple_code>/', views.get_short_answer_stats_by_code, name='short_answer_stats_by_code'),
 ]
