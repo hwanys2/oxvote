@@ -75,6 +75,34 @@
             <p class="sub-text">참여자들의 답변을 기다리고 있습니다...</p>
         </div>
     </div>
+    
+    <!-- 순위표 섹션 -->
+    <div class="ranking-section">
+        <div class="ranking-header">
+            <h2 class="ranking-title">
+                <i class="fas fa-trophy"></i>
+                실시간 답변 순위
+            </h2>
+        </div>
+        <div id="rankingContainer" class="ranking-container">
+            <div id="rankingNoData" class="ranking-no-data">
+                <i class="fas fa-chart-bar"></i>
+                <p>아직 순위 데이터가 없습니다</p>
+            </div>
+            <table id="rankingTable" class="ranking-table" style="display: none;">
+                <thead>
+                    <tr>
+                        <th class="rank-col">순위</th>
+                        <th class="answer-col">답변</th>
+                        <th class="count-col">개수</th>
+                        <th class="bar-col">비율</th>
+                    </tr>
+                </thead>
+                <tbody id="rankingTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <!-- QR 코드 확대 모달 -->
@@ -469,6 +497,218 @@ body {
     line-height: 1.6;
 }
 
+/* 순위표 섹션 */
+.ranking-section {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 
+        0 10px 40px rgba(0,0,0,0.08),
+        0 2px 8px rgba(0,0,0,0.04);
+    border: 2px solid #e8eaed;
+}
+
+.ranking-header {
+    margin-bottom: 25px;
+}
+
+.ranking-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #fbbc04 0%, #ea4335 50%, #4285f4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    justify-content: center;
+    letter-spacing: -0.5px;
+}
+
+.ranking-title i {
+    background: linear-gradient(135deg, #fbbc04 0%, #ea4335 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 2rem;
+}
+
+.ranking-container {
+    position: relative;
+    min-height: 200px;
+}
+
+.ranking-no-data {
+    text-align: center;
+    padding: 60px 20px;
+    color: #9aa0a6;
+}
+
+.ranking-no-data i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    opacity: 0.4;
+}
+
+.ranking-no-data p {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.ranking-table thead {
+    background: linear-gradient(135deg, #4285f4 0%, #3367d6 100%);
+    color: white;
+}
+
+.ranking-table th {
+    padding: 16px 20px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ranking-table .rank-col {
+    width: 80px;
+    text-align: center;
+}
+
+.ranking-table .answer-col {
+    width: auto;
+}
+
+.ranking-table .count-col {
+    width: 100px;
+    text-align: center;
+}
+
+.ranking-table .bar-col {
+    width: 200px;
+    padding-left: 20px;
+}
+
+.ranking-table tbody tr {
+    border-bottom: 1px solid #e8eaed;
+    transition: all 0.2s ease;
+}
+
+.ranking-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.ranking-table tbody tr:hover {
+    background: #f8f9fa;
+    transform: translateX(4px);
+}
+
+.ranking-table tbody td {
+    padding: 18px 20px;
+    font-size: 1rem;
+}
+
+.ranking-table .rank-cell {
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.ranking-table .rank-1 {
+    background: linear-gradient(90deg, rgba(251, 188, 4, 0.1) 0%, transparent 100%);
+}
+
+.ranking-table .rank-2 {
+    background: linear-gradient(90deg, rgba(154, 160, 166, 0.1) 0%, transparent 100%);
+}
+
+.ranking-table .rank-3 {
+    background: linear-gradient(90deg, rgba(255, 152, 0, 0.1) 0%, transparent 100%);
+}
+
+.ranking-table .rank-1 .rank-cell {
+    color: #fbbc04;
+    font-size: 1.3rem;
+}
+
+.ranking-table .rank-2 .rank-cell {
+    color: #9aa0a6;
+    font-size: 1.25rem;
+}
+
+.ranking-table .rank-3 .rank-cell {
+    color: #ff9800;
+    font-size: 1.25rem;
+}
+
+.ranking-table .rank-1 .rank-cell::before {
+    content: '🥇 ';
+}
+
+.ranking-table .rank-2 .rank-cell::before {
+    content: '🥈 ';
+}
+
+.ranking-table .rank-3 .rank-cell::before {
+    content: '🥉 ';
+}
+
+.ranking-table .answer-cell {
+    font-weight: 500;
+    color: #202124;
+    word-break: break-word;
+    max-width: 400px;
+}
+
+.ranking-table .count-cell {
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #4285f4;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.ranking-table .bar-cell {
+    padding-left: 20px;
+}
+
+.ranking-bar-container {
+    height: 24px;
+    background: #e8eaed;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+}
+
+.ranking-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #4285f4 0%, #3367d6 100%);
+    border-radius: 12px;
+    transition: width 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 8px;
+    min-width: 30px;
+}
+
+.ranking-bar-text {
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+}
+
 /* QR 코드 모달 */
 .qr-modal {
     display: none;
@@ -719,6 +959,18 @@ body {
         min-height: 300px;
     }
     
+    .ranking-section {
+        padding: 20px;
+    }
+    
+    .ranking-table .bar-col {
+        width: 150px;
+    }
+    
+    .ranking-table .answer-cell {
+        max-width: 200px;
+    }
+    
     .qr-modal-content {
         padding: 30px 20px;
     }
@@ -824,15 +1076,72 @@ function updateWordCloud(wordData) {
     }
 }
 
+function updateRankingTable(wordData) {
+    const tableBody = document.getElementById('rankingTableBody');
+    const rankingTable = document.getElementById('rankingTable');
+    const rankingNoData = document.getElementById('rankingNoData');
+    
+    if (!wordData || wordData.length === 0) {
+        rankingTable.style.display = 'none';
+        rankingNoData.style.display = 'block';
+        return;
+    }
+    
+    rankingTable.style.display = 'table';
+    rankingNoData.style.display = 'none';
+    
+    // 빈도수 기준으로 정렬 (내림차순)
+    const sortedData = [...wordData].sort((a, b) => b.count - a.count);
+    
+    // 최대값 계산 (비율 표시용)
+    const maxCount = sortedData[0].count;
+    const totalCount = sortedData.reduce((sum, item) => sum + item.count, 0);
+    
+    // 기존 행 제거
+    tableBody.innerHTML = '';
+    
+    // 순위표 생성
+    sortedData.forEach((item, index) => {
+        const rank = index + 1;
+        const percentage = totalCount > 0 ? ((item.count / totalCount) * 100).toFixed(1) : 0;
+        const barWidth = maxCount > 0 ? (item.count / maxCount) * 100 : 0;
+        
+        const row = document.createElement('tr');
+        row.className = `rank-${rank}`;
+        
+        row.innerHTML = `
+            <td class="rank-cell">${rank}</td>
+            <td class="answer-cell">${escapeHtml(item.response_text)}</td>
+            <td class="count-cell">${item.count}</td>
+            <td class="bar-cell">
+                <div class="ranking-bar-container">
+                    <div class="ranking-bar" style="width: ${barWidth}%">
+                        <span class="ranking-bar-text">${percentage}%</span>
+                    </div>
+                </div>
+            </td>
+        `;
+        
+        tableBody.appendChild(row);
+    });
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
 function updateStats(data) {
     document.getElementById('uniqueParticipants').textContent = data.unique_participants;
     document.getElementById('totalResponses').textContent = data.total_responses;
     
-    // 워드 데이터가 변경되었을 때만 워드클라우드 업데이트
+    // 워드 데이터가 변경되었을 때만 워드클라우드 및 순위표 업데이트
     const newWordData = JSON.stringify(data.word_data);
     if (newWordData !== JSON.stringify(currentWordData)) {
         currentWordData = data.word_data;
         updateWordCloud(data.word_data);
+        updateRankingTable(data.word_data);
     }
 }
 
